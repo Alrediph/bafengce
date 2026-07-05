@@ -6,7 +6,7 @@ const nextClick = (element) => new Promise(resolve => {
 });
 
 export default async function playJingfeng(container) {
-    // 1. 完整录入九支尊贵上上签文数据
+    // 1. 完整录入九支上上签文数据
     const allSigns = [
         { num: '一', poem: '东风先到竹枝头，<br>万卷书开月满楼。<br>此去青山皆旧识，<br>不须行处问春秋。', reply: '学业精进，前路有光。<br>所遇皆善，所行皆通。' },
         { num: '二', poem: '弦上春风指下生，<br>一音初动万音成。<br>从今便是无弦处，<br>亦有天风自在鸣。', reply: '内心安宁，诸事和谐。<br>不求而得，不争而明。' },
@@ -34,17 +34,22 @@ export default async function playJingfeng(container) {
                 transition: opacity 2s ease; position: relative;
             }
 
-            /* 3D六角形等轴测签筒定位 */
+            /* 🌟【大魄力重构】将立体签筒等比例放大，赋予其庄严稳重的视界分量 */
             .cylinder-container {
-                position: absolute; top: 24%; left: 50%; transform: translateX(-50%);
-                width: 130px; height: 240px; cursor: pointer;
+                position: absolute; 
+                top: 18%; /* 稍微往上提，给下方的宏伟卡片留出空间 */
+                left: 50%; 
+                transform: translateX(-50%);
+                width: 165px;  /* 从130px放大到165px，彻底告别小气感 */
+                height: 300px; /* 从240px放大到300px */
+                cursor: pointer;
                 transition: transform 0.12s ease;
             }
             .cylinder-svg { width: 100%; height: 100%; overflow: visible; }
             
             .solstice-light {
                 position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-                width: 2px; height: 24vh;
+                width: 2px; height: 18vh;
                 background: linear-gradient(to bottom, rgba(235,225,200,0) 0%, rgba(225,210,180,0.3) 60%, rgba(255,255,255,0) 100%);
                 pointer-events: none;
             }
@@ -52,26 +57,26 @@ export default async function playJingfeng(container) {
             /* 筒身震颤 */
             @keyframes cylinder-shake {
                 0%, 100% { transform: translateX(-50%) rotate(0deg); }
-                15% { transform: translateX(-54%) rotate(-9deg) translateY(-2px); }
-                30% { transform: translateX(-46%) rotate(8deg) translateY(1px); }
-                45% { transform: translateX(-53%) rotate(-7deg) translateY(-1px); }
-                60% { transform: translateX(-47%) rotate(5deg); }
+                15% { transform: translateX(-55%) rotate(-9deg) translateY(-3px); }
+                30% { transform: translateX(-45%) rotate(8deg) translateY(2px); }
+                45% { transform: translateX(-54%) rotate(-7deg) translateY(-1px); }
+                60% { transform: translateX(-46%) rotate(5deg); }
                 75% { transform: translateX(-51%) rotate(-3deg); }
                 90% { transform: translateX(-49%) rotate(2deg); }
             }
             .shaking { animation: cylinder-shake 0.6s ease-in-out; }
 
-            /* 双层红呢滚边洒金笺纸卡片结构 */
+            /* 🌟【大魄力重构】同步放大整体卡片，营造照片般尊贵的厚重感 */
             .fortune-card-wrapper {
                 position: absolute; top: 50%; left: 50%;
                 transform: translate(-50%, -45%) scale(0.9);
                 opacity: 0; pointer-events: none;
                 transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1s ease;
                 
-                background-color: #962929; /* 大红衬底呢纸色 */
-                padding: 16px 20px;
+                background-color: #962929; 
+                padding: 18px 22px;
                 border-radius: 4px;
-                box-shadow: 0 20px 50px rgba(50,15,15,0.2);
+                box-shadow: 0 25px 60px rgba(50,15,15,0.22);
                 display: block;
             }
             .fortune-card-wrapper.reveal {
@@ -80,25 +85,25 @@ export default async function playJingfeng(container) {
             }
 
             .fortune-card-inner {
-                background-color: #faf6ed; /* 素雅宣纸色 */
+                background-color: #faf6ed; 
                 border: 1px solid #e1d7be;
-                padding: 30px 30px 35px 30px;
-                width: 350px; min-height: 460px;
+                padding: 35px 35px 40px 35px;
+                width: 380px;      /* 宽度从350px拓宽到380px */
+                min-height: 520px; /* 高度从460px大幅拉伸到520px，死锁外廓边界 */
                 box-sizing: border-box;
                 position: relative;
                 
-                /* 纯CSS模拟洒金宣纸纹理 */
+                /* 洒金宣纸纹理 */
                 background-image: 
                     radial-gradient(rgba(218,165,32,0.22) 1px, transparent 0), 
                     radial-gradient(rgba(218,165,32,0.18) 1.5px, transparent 0);
                 background-size: 28px 28px, 44px 44px;
                 background-position: 0 0, 10px 14px;
-                box-shadow: inset 0 0 30px rgba(235,220,190,0.35);
+                box-shadow: inset 0 0 35px rgba(235,220,190,0.35);
             }
 
-            /* 签头：横排 */
             .card-header-title {
-                font-size: 1.55rem; font-weight: bold; color: #962929;
+                font-size: 1.65rem; font-weight: bold; color: #962929;
                 letter-spacing: 0.5em; padding-bottom: 12px; margin-right: -0.5em;
                 text-align: center; font-family: 'KangXi', serif;
             }
@@ -106,12 +111,13 @@ export default async function playJingfeng(container) {
                 width: 100%; border-top: 1px dashed #962929; margin-bottom: 30px; opacity: 0.5;
             }
 
-            /* 纵向原生块级流动分栏模型 */
+            /* 🌟【终极修复】将纵向容纳轨道的高度彻底锁死在 320px，给长句留出充沛像素 */
             .card-body-columns {
                 writing-mode: vertical-rl; 
-                height: 270px; width: 100%;
+                height: 320px; /* 从270px大幅加高至320px，完美镇压17字长句溢出 */
+                width: 100%;
                 box-sizing: border-box;
-                padding-right: 15px; /* 让整体内容稍微左移，居中分布 */
+                padding-right: 10px; 
             }
 
             .card-section {
@@ -120,19 +126,19 @@ export default async function playJingfeng(container) {
                 height: 100%;
             }
             
-            /* 🌟【微调核心一】诗曰与解曰之间的横向列间距从 55px 缩小到 24px，防止解曰出界 */
-            .card-section.poem-zone { margin-left: 24px; } 
+            /* 保持微调后的完美紧凑间距，配合大卡片更显张力 */
+            .card-section.poem-zone { margin-left: 28px; } 
             
             .section-lbl {
                 font-weight: bold; color: #962929; font-size: 1.15rem;
-                margin-left: 10px; /* 🌟【微调核心二】标签与正文的横向间距从 15px 紧缩到 10px */
+                margin-left: 10px; 
                 display: block; font-family: 'KangXi', serif;
                 border-left: 1px solid rgba(150,41,41,0.25);
                 padding-left: 4px;
             }
             .section-txt {
                 font-size: 1.05rem; color: #2c2c2c; 
-                line-height: 2.1; /* 🌟【微调核心三】文字行间距从 2.4 优化至 2.1，使多行诗句排布更紧凑工整 */
+                line-height: 2.1; 
                 letter-spacing: 0.16em; display: block; white-space: nowrap;
             }
 
@@ -161,6 +167,7 @@ export default async function playJingfeng(container) {
             <div id="jf-content-stage">
                 <div class="solstice-light"></div>
 
+                <!-- 3D六角形等轴测大签筒 -->
                 <div class="cylinder-container" id="jf-cylinder">
                     <svg class="cylinder-svg" viewBox="0 0 140 240">
                         <defs>
@@ -206,6 +213,7 @@ export default async function playJingfeng(container) {
                     </svg>
                 </div>
 
+                <!-- 大尺寸朱砂滚边洒金笺卡 -->
                 <div class="fortune-card-wrapper" id="jf-card-wrap">
                     <div class="fortune-card-inner">
                         <div class="card-header-title" id="card-title-slot">第 壹 签 · 上上</div>
