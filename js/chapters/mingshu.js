@@ -58,7 +58,7 @@ export default async function playMingshu(container) {
 
             .folding-book {
                 display: flex;
-                /* 【核心修复】在竖排文字下，column 才是真正的从右往左横向并排 */
+                /* 在竖排文字下，column 才是真正的从右往左横向并排 */
                 flex-direction: column; 
                 overflow-x: auto;
                 overflow-y: hidden;
@@ -117,7 +117,6 @@ export default async function playMingshu(container) {
                         <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">风行草上，万物从之。</div>
                     </div>
                     <div class="fold-page">
-                        <div class="fold-page">
                         <div class="font-kangxi" style="font-size: 1.3rem; font-weight: bold;">君子不器。</div>
                         <div style="font-size: 0.95rem; color: #7a7a7a; margin-right: 15px; font-family: serif;">——《论语·为政》</div>
                         <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">风无定形，万形皆可。</div>
@@ -148,7 +147,7 @@ export default async function playMingshu(container) {
 
     // ====== 第一幕：“明庶”大字居中浮现 ======
     titleScreen.style.opacity = 1;
-    await nextClick(wrapper); // 🌟 停住，等待用户点击屏幕
+    await nextClick(wrapper); // 停住，等待用户点击屏幕
 
     // 大字消散
     titleScreen.style.opacity = 0;
@@ -159,7 +158,7 @@ export default async function playMingshu(container) {
     intro.style.display = 'block';
     await wait(50);
     intro.style.opacity = 1;
-    await nextClick(wrapper); // 🌟 再次停住，等待用户点击屏幕
+    await nextClick(wrapper); // 再次停住，等待用户点击屏幕
 
     // 启幕词隐去
     intro.style.opacity = 0;
