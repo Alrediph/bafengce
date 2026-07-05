@@ -82,7 +82,7 @@ export default async function playMingshu(container) {
                 height: 100%;
                 flex-shrink: 0; /* 死锁宽度，坚决防止折页被挤压 */
                 display: flex;
-                flex-direction: column; /* 内部文字行依然按照古籍秩序从右往左排 */
+                flex-direction: column; /* 内部文字行依然按照古籍秩序从右往流动 */
                 justify-content: flex-start;
             }
             
@@ -124,7 +124,7 @@ export default async function playMingshu(container) {
                     <div class="fold-page">
                         <div class="font-kangxi" style="font-size: 1.3rem; font-weight: bold;">君子和而不同。</div>
                         <div style="font-size: 0.95rem; color: #7a7a7a; margin-right: 15px; font-family: serif;">——《论语·子路》</div>
-                        <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">八风各至，不相扰也。</div>
+                        <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">八风各至，不相扰也.</div>
                     </div>
                     <div class="fold-page last-page">
                         <div class="font-kangxi" style="font-size: 1.25rem; font-weight: bold; letter-spacing: 0.3em;">明庶风至。君子如竹。</div>
@@ -147,7 +147,7 @@ export default async function playMingshu(container) {
 
     // ====== 第一幕：“明庶”大字居中浮现 ======
     titleScreen.style.opacity = 1;
-    await nextClick(wrapper); // 停住，等待用户点击屏幕
+    await nextClick(wrapper); 
 
     // 大字消散
     titleScreen.style.opacity = 0;
@@ -158,7 +158,7 @@ export default async function playMingshu(container) {
     intro.style.display = 'block';
     await wait(50);
     intro.style.opacity = 1;
-    await nextClick(wrapper); // 再次停住，等待用户点击屏幕
+    await nextClick(wrapper); 
 
     // 启幕词隐去
     intro.style.opacity = 0;
@@ -170,4 +170,12 @@ export default async function playMingshu(container) {
     await wait(50);
     bookContainer.style.opacity = 1;
     bookContainer.classList.add('active');
+
+    // 🌟【本次修复核心】展现完折子后，再次静静等待读者点击任意位置
+    await nextClick(wrapper);
+    
+    // 收到指令，第一开舞台优雅淡出
+    container.classList.remove('active');
+    await wait(2500); // 留出充足的淡出过渡动画时间
+    container.innerHTML = ''; // 彻底清理释放内存，将控制权无缝移交给下一开「清明」
 }
