@@ -58,38 +58,40 @@ export default async function playQingming(container) {
                 transition: opacity 2.5s ease; position: relative;
             }
             
-            /* 【终极修复】在竖排文字下，flex-direction: column 才是真正的从右往左横向排布！ */
+            /* 【完美修复】放弃Flexbox！回归古籍原生纵向流动：锁死高度，让子列自然向左延伸 */
             .tiba-zone {
                 position: absolute; 
-                right: 52vw; /* 从屏幕中偏右开始向左优雅平铺 */
+                right: 50vw; /* 严格定位于屏幕中线左侧一点点，向左平铺展开 */
                 top: 15vh; 
                 height: 70vh;
-                display: flex; 
-                flex-direction: column; /* 核心修复：死锁横向从右往左的流向 */
-                align-items: flex-start;
-                justify-content: flex-start;
-                writing-mode: vertical-rl; 
-                gap: 55px; /* 每首诗列之间的黄金间距 */
+                writing-mode: vertical-rl; /* 强制垂直排版，块流向自右向左 */
             }
             
             .poem-column {
                 font-size: 1.1rem; 
                 color: #333333;
                 height: 100%;
-                display: flex;
-                flex-direction: column; /* 保持古籍单列内部的垂直布局 */
-                justify-content: flex-start;
-                flex-shrink: 0; /* 坚决防止被挤压变形 */
+                display: inline-block; /* 在vertical-rl下，inline-block会顺畅、极其稳固地横向向左并排 */
+                vertical-align: top;
+                margin-left: 60px; /* 锁死每首小诗之间的黄金留白间距，代替不稳定的flex-gap */
+                white-space: nowrap; /* 坚决防止在单列内部发生任何意外的换行重叠 */
             }
             
             .poem-title { 
                 font-weight: bold; 
                 color: #000000; 
-                margin-bottom: 20px; 
+                margin-left: 18px; /* 竖排模式下，margin-left相当于小诗标题与诗句正文之间的间距 */
                 font-size: 1.2rem; 
+                display: block;
+            }
+            
+            .poem-content {
+                display: block;
+                line-height: 2.3; 
+                letter-spacing: 0.15em;
             }
 
-            /* 右侧白描意象区 */
+            /* 右侧白描写意艺术区 */
             .ink-art-zone {
                 position: absolute; right: 5%; bottom: 5%; width: 45vw; height: 80vh;
                 pointer-events: none;
@@ -128,12 +130,11 @@ export default async function playQingming(container) {
             .trigger-dot:hover { transform: scale(1.4); background: radial-gradient(circle, rgba(160,175,165,0.35) 0%, rgba(255,255,255,0) 70%); }
             .trigger-dot.clicked { pointer-events: none; opacity: 0 !important; }
 
-            /* 【修复】加深色彩厚度的真实可见水墨洇散特效 */
+            /* 显著加深对比度的真实水墨动态洇散特效 */
             #ink-splash {
                 position: absolute; width: 500px; height: 500px;
                 top: 50%; left: 50%; transform: translate(-50%, -50%);
-                /* 显著加深浓淡对比度，使其在各类屏幕上清晰可辨 */
-                background: radial-gradient(circle, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.08) 40%, rgba(255, 255, 255, 0) 70%);
+                background: radial-gradient(circle, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.08) 40%, rgba(255, 255, 255, 0) 70%);
                 border-radius: 50%; pointer-events: none; opacity: 0;
             }
             @keyframes ink-bloom {
@@ -203,7 +204,7 @@ export default async function playQingming(container) {
     container.classList.add('active');
     await wait(400);
 
-    // ====== 第一幕：居中“清明”大字浮现 ======
+    // ====== 第一幕：“清明”大字浮现 ======
     titleScreen.style.opacity = 1;
     await nextClick(wrapper);
     titleScreen.style.opacity = 0;
@@ -219,15 +220,15 @@ export default async function playQingming(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：全景交互大舞台亮起 ======
+    // ====== 第三幕：全景交互长卷拉开 ======
     contentStage.style.display = 'block';
     await wait(50);
     contentStage.style.opacity = 1;
 
-    // 【修复】踢走中文错字，注入深刻的水墨动态洇散
+    // 触发真实水墨大滴落下，在宣纸中央优雅洇散
     inkSplash.classList.add('ink-blooming');
 
-    // 绝对的时间性线型计数器，死锁诗句一到五的顺时序出场
+    // 绝对的时序性线型计数器，死锁诗句一到五的绝对出场顺序
     let currentRevealedIndex = 0;
 
     const dots = ['dot-a', 'dot-b', 'dot-c', 'dot-d', 'dot-e'];
@@ -244,7 +245,7 @@ export default async function playQingming(container) {
             poemColumn.className = 'poem-column';
             poemColumn.innerHTML = `
                 <div class="poem-title font-kangxi">${item.title}</div>
-                <div style="line-height: 2.3; letter-spacing: 0.15em;">${convertToSpans(item.content)}</div>
+                <div class="poem-content">${convertToSpans(item.content)}</div>
             `;
             
             // 挂载到题跋区
