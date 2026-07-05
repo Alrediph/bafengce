@@ -35,7 +35,7 @@ function revealText(element, speed = 35) {
 }
 
 export default async function playLiangfeng(container) {
-    // 二卷本数据盘
+    // 内地十八省两卷目次本
     const pagesData = [
         [
             { id: 'zhili',    name: '直隶', poem: '燕山雪花大如席，片片吹落轩辕台。', author: '——李白《北风行》', note: '京华烟云，长城内外。' },
@@ -54,8 +54,8 @@ export default async function playLiangfeng(container) {
             { id: 'hunan',    name: '湖南', poem: '洞庭波涌连天雪，长岛人歌动地诗。', author: '——毛泽东', note: '潇湘夜雨，岳麓书声。' },
             { id: 'sichuan',  name: '四川', poem: '蜀道之难，难于上青天。', author: '——李白《蜀道难》', note: '巴山夜雨，锦城花重。' },
             { id: 'fujian',   name: '福建', poem: '南国多山水，闽中独妙奇。', author: '——杜荀鹤《闽中别所知》', note: '闽山苍苍，海波不惊。' },
-            { id: 'guangdong',name: '广东', poem: '罗浮山下四时春，卢橘杨梅次第新。', author: '——苏轼《食荔枝》', note: '岭南风暖，潮汕月明。' },
-            { id: 'guangxi',  name: '广西', poem: '江作青罗带，山如碧玉簪。', author: '——韩愈《送桂州严大夫包装》', note: '桂林山水，八桂烟霞。' },
+            { id: 'guangdong',name: '广东', poem: '罗浮山下四时春，卢橘杨梅次第新。', author: '——苏轼《食荔枝》', note: '岭南风暖，潮仙月明。' },
+            { id: 'guangxi',  name: '广西', poem: '江作青罗带，山如碧玉簪。', author: '——韩愈《送桂州严大夫》', note: '桂林山水，八桂烟霞。' },
             { id: 'yunnan',   name: '云南', poem: '天气常如二三月，花枝不断四时春。', author: '——杨慎《滇海曲》', note: '苍山洱海，彩云之南。' },
             { id: 'guizhou',  name: '贵州', poem: '天无三日晴，地无三里平。', author: '——民谚', note: '黔山万壑，苗岭侗歌。' }
         ]
@@ -68,29 +68,24 @@ export default async function playLiangfeng(container) {
                 display: flex; justify-content: center; align-items: center;
                 position: relative; background-color: #ffffff;
             }
-            
             #lf-title-screen { 
                 position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                 font-size: 3.8rem; letter-spacing: 0.6em; text-indent: 0.6em;
                 opacity: 0; transition: opacity 2s ease; cursor: pointer; white-space: nowrap; text-align: center;
             }
-            
             #lf-intro { 
                 position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                 font-size: 1.2rem; line-height: 2.8; letter-spacing: 0.15em; 
                 opacity: 0; transition: opacity 2s ease; cursor: pointer;
                 writing-mode: vertical-rl; white-space: nowrap;
             }
-            
             #lf-content-stage {
                 width: 100%; height: 100%; display: none; opacity: 0;
                 transition: opacity 1.8s ease; position: relative;
                 display: flex; justify-content: center; align-items: center;
             }
-
-            /* 🌟【破局核心一】回归标准横排，配合 width: fit-content 逼迫容器完美收紧，死锁在屏幕正中央 */
             .woodblock-catalog-container {
-                writing-mode: horizontal-tb !important; /* 强制脱离竖排对容器宽度的污染 */
+                writing-mode: horizontal-tb !important;
                 width: fit-content !important; 
                 height: 68vh;
                 border: 4px double #1a1a1a; padding: 12px 25px; 
@@ -98,24 +93,19 @@ export default async function playLiangfeng(container) {
                 box-shadow: inset 0 0 40px rgba(215,200,180,0.25);
                 margin: 0 auto; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             }
-            
-            /* 🌟【破局核心二】利用标准横排下的 row-reverse，让省份完美实现“自右向左”平铺 */
             .woodblock-page-canvas {
                 height: 100%; 
                 display: flex !important; 
-                flex-direction: row-reverse !important; /* 核心：让数组第一项居右，最后一项居左 */
+                flex-direction: row-reverse !important; 
                 justify-content: flex-start; align-items: flex-start;
             }
-
-            /* 省份直栏：内部保持精美的纵向古籍文字 */
             .woodblock-prov-column {
-                writing-mode: vertical-rl !important; /* 仅在单列内部开启垂直流 */
+                writing-mode: vertical-rl !important;
                 height: 100%; display: inline-block; vertical-align: top;
                 border-left: 1px solid #e3dac9; width: 68px; overflow: hidden;
                 white-space: nowrap; position: relative;
                 transition: width 0.55s cubic-bezier(0.25, 1, 0.5, 1);
             }
-
             .prov-clickable-header {
                 height: 100%; width: 68px; display: block; text-align: center;
                 cursor: pointer; padding-top: 45px; box-sizing: border-box; 
@@ -126,36 +116,24 @@ export default async function playLiangfeng(container) {
                 letter-spacing: 0.25em; transition: color 0.3s ease;
             }
             .prov-clickable-header:hover .prov-large-name { color: #962929; }
-
             .prov-folded-content {
                 height: 100%; margin-right: 68px; opacity: 0; width: 0;
                 display: block; box-sizing: border-box; padding: 45px 22px 30px 22px;
                 background-color: #f6f0e4; 
                 transition: width 0.55s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease;
             }
-
             .woodblock-prov-column.active { width: 255px; background-color: #faf6eb; }
             .woodblock-prov-column.active .prov-large-name { color: #962929; }
             .woodblock-prov-column.active .prov-folded-content { width: 187px; opacity: 1; pointer-events: auto; }
-
             .inner-poem-row { font-size: 1.12rem; color: #2c2c2c; line-height: 2.2; letter-spacing: 0.15em; display: block; margin-left: 10px; }
             .inner-author-row { font-size: 0.85rem; color: #777777; display: block; margin-left: 18px; text-align: left; margin-bottom: 25px; }
             .inner-footnote-row { font-size: 0.95rem; color: #8c7355; font-weight: bold; line-height: 2; letter-spacing: 0.12em; display: block; border-right: 1px dashed rgba(140,115,85,0.25); padding-right: 6px; }
-
-            /* 🌟【破局核心三】由于大框完美收紧，left: 0 将极其精准地下锁在最左侧省份（浙江）的正下方！ */
             .woodblock-footer-bar {
-                position: absolute;
-                bottom: -50px;
-                left: 0px; 
-                display: flex !important;
-                flex-direction: row !important;
-                align-items: center !important;
-                justify-content: flex-start !important;
-                gap: 16px;
-                writing-mode: horizontal-tb !important;
-                direction: ltr !important;
+                position: absolute; bottom: -50px; left: 0px; 
+                display: flex !important; flex-direction: row !important;
+                align-items: center !important; justify-content: flex-start !important;
+                gap: 16px; writing-mode: horizontal-tb !important; direction: ltr !important;
             }
-
             .woodblock-page-btn {
                 display: flex !important; flex-direction: row !important;
                 align-items: center !important; justify-content: center !important;
@@ -165,8 +143,6 @@ export default async function playLiangfeng(container) {
             .woodblock-page-btn:hover { color: #962929; font-weight: bold; }
             .btn-disabled { opacity: 0.15 !important; pointer-events: none !important; }
             .woodblock-page-btn span { display: inline-block !important; writing-mode: horizontal-tb !important; white-space: nowrap !important; }
-
-            /* 正中央独立大字终章页 */
             #lf-outro-screen {
                 position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                 font-size: 2.4rem; letter-spacing: 0.5em; color: #2a2a2a;
@@ -177,17 +153,14 @@ export default async function playLiangfeng(container) {
 
         <div class="liangfeng-wrapper" id="lf-wrapper">
             <div id="lf-title-screen" class="vertical-text font-kangxi">凉风</div>
-
             <div id="lf-intro" class="vertical-text font-kangxi" style="display: none;">
                 凉风，西南风也。凉，寒也。阴气始行，微敛也。<br>
                 属坤，八音为土。<br>
                 立秋之风。
             </div>
-
             <div id="lf-content-stage">
                 <div class="woodblock-catalog-container">
                     <div class="woodblock-page-canvas" id="woodblock-canvas"></div>
-                    
                     <div class="woodblock-footer-bar" id="woodblock-foot">
                         <div class="woodblock-page-btn font-kangxi" id="btn-prev-page">
                             <span>【</span><span>前</span><span>卷</span><span>】</span>
@@ -198,7 +171,6 @@ export default async function playLiangfeng(container) {
                     </div>
                 </div>
             </div>
-
             <div id="lf-outro-screen" class="font-kangxi">君子之行，大地記之。</div>
         </div>
     `;
@@ -208,7 +180,6 @@ export default async function playLiangfeng(container) {
     const intro = document.getElementById('lf-intro');
     const contentStage = document.getElementById('lf-content-stage');
     const canvas = document.getElementById('woodblock-canvas');
-    
     const btnPrev = document.getElementById('btn-prev-page');
     const btnNext = document.getElementById('btn-next-page');
     const outroScreen = document.getElementById('lf-outro-screen');
@@ -284,4 +255,47 @@ export default async function playLiangfeng(container) {
             btnNext.className = 'woodblock-page-btn font-kangxi';
             btnNext.innerHTML = '<span>【</span><span>次</span><span>卷</span><span>】</span>';
         } else if (pageIdx === 1) {
-            btnPrev.className
+            btnPrev.className = 'woodblock-page-btn font-kangxi';
+            btnNext.className = 'woodblock-page-btn font-kangxi';
+            btnNext.innerHTML = '<span>【</span><span>掩</span><span>卷</span><span>】</span>';
+        }
+    }
+
+    btnPrev.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentPageIndex > 0) { 
+            currentPageIndex--; 
+            renderWoodblockPage(currentPageIndex); 
+        }
+    });
+
+    btnNext.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (currentPageIndex === 0) {
+            currentPageIndex = 1;
+            renderWoodblockPage(currentPageIndex);
+        } else if (currentPageIndex === 1) {
+            await runStandaloneOutroPage();
+        }
+    });
+
+    renderWoodblockPage(0);
+
+    // ====== 第四幕：全手动触发的独立大字页控制流 ======
+    async function runStandaloneOutroPage() {
+        contentStage.style.opacity = 0;
+        await wait(1800);
+        contentStage.style.display = 'none';
+
+        outroScreen.style.display = 'block';
+        await wait(50);
+        outroScreen.style.opacity = '1'; 
+        
+        await nextClick(wrapper);
+        
+        outroScreen.style.opacity = '0'; 
+        await wait(1800);
+        container.innerHTML = '';
+        container.classList.remove('active');
+    }
+}
