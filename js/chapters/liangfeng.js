@@ -5,7 +5,7 @@ const nextClick = (element) => new Promise(resolve => {
     element.addEventListener('click', resolve, { once: true });
 });
 
-// 辅助函数：将字符用带有动态模糊过渡的span包裹，实现细腻的墨迹渐显
+// 辅助函数：细腻的墨迹渐显效果
 function convertToSpans(htmlString) {
     let result = '';
     let inTag = false;
@@ -35,14 +35,14 @@ function revealText(element, speed = 45) {
 }
 
 export default async function playLiangfeng(container) {
-    // 1. 定制属于文人长卷的五个写意足迹节点数据
-    const footprints = [
-        { name: '长安', coord: { x: 220, y: 310 }, text: '秋风吹渭水，<br>落叶满长安。' },
-        { name: '洛阳', coord: { x: 290, y: 290 }, text: '洛阳城里见秋风，<br>欲作家书意万重。' },
-        { name: '金陵', coord: { x: 380, y: 340 }, text: '金陵夜寂凉风发，<br>独上高楼望吴越。' },
-        { name: '临安', coord: { x: 410, y: 380 }, text: '山外青山楼外楼，<br>西湖歌舞几时休。' },
-        { name: '蜀道', coord: { x: 140, y: 380 }, text: '长风万里送秋雁，<br>对此可以酣高楼。' }
-    ];
+    // 将诗句与具体的行政行省进行死锁绑定
+    const provinceData = {
+        'shaanxi': { name: '陕西 · 长安', text: '秋风吹渭水，<br>落叶满长安。' },
+        'henan':   { name: '河南 · 洛阳', text: '洛阳城里见秋风，<br>欲作家书意万重。' },
+        'jiangsu': { name: '江苏 · 金陵', text: '金陵夜寂凉风发，<br>独上高楼望吴越。' },
+        'zhejiang':{ name: '浙江 · 临安', text: '山外青山楼外楼，<br>西湖歌舞几时休。' },
+        'sichuan': { name: '四川 · 蜀道', text: '长风万里送秋雁，<br>对此可以酣高楼。' }
+    };
 
     container.innerHTML = `
         <style>
@@ -59,103 +59,63 @@ export default async function playLiangfeng(container) {
                 transition: opacity 2s ease; position: relative;
             }
 
-            /* 左侧写意山河舆图区 */
+            /* 右侧中国分省写意舆图区（完美对齐 image_381e7e 的质感） */
             .map-zone {
-                position: absolute; left: 6%; top: 10%; width: 55vw; height: 80vh;
+                position: absolute; right: 4%; top: 12%; width: 52vw; height: 76vh;
             }
-            .map-svg { width: 100%; height: 100%; overflow: visible; }
+            .china-map-svg { width: 100%; height: 100%; }
             
-            /* 山河写意白描线网 */
-            .map-outline {
-                stroke: #e8e8e8; stroke-width: 1; fill: none; stroke-dasharray: 4 4;
+            /* 省份基础区块：复刻实物图的清爽灰蓝色调，白边勾勒 */
+            .province-block {
+                fill: #abc4d0;
+                stroke: #ffffff;
+                stroke-width: 1.5;
+                transition: fill 0.4s ease, filter 0.4s ease;
             }
-
-            /* 地图整体写意轮廓弧线 */
-            .map-coastline {
-                stroke: #f2f5f2; stroke-width: 2; fill: none;
-            }
-
-            /* 隐约的灰色全路网虚线基底 */
-            .bg-route-line {
-                stroke: #f0f0f0; stroke-width: 1.2; fill: none; stroke-dasharray: 2 4;
-            }
-
-            /* 激活时亮起的朱砂红连接线 */
-            .travel-line-seg {
-                stroke: #962929; stroke-width: 1.5; fill: none;
-                stroke-dasharray: 200; stroke-dashoffset: 200;
-                transition: stroke-dashoffset 1.5s ease-out;
-            }
-            .travel-line-seg.draw {
-                stroke-dashoffset: 0;
-            }
-
-            /* 足迹水墨核心圆点 */
-            .map-dot {
-                fill: #2c2c2c; opacity: 0; transform: scale(0);
-                transform-origin: center;
-                transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
-            }
-            .map-dot.bloom { opacity: 1; transform: scale(1.3); fill: #962929; }
             
-            /* 交互触发圈：带有向外扩散扩散的动画效果 */
-            .map-dot-ring {
-                stroke: #962929; stroke-width: 1; fill: none; opacity: 0;
-                transform-origin: center; transform: scale(0.5);
-            }
-            @keyframes ring-pulse {
-                0% { transform: scale(0.5); opacity: 0.8; }
-                100% { transform: scale(2.2); opacity: 0; }
-            }
-            .map-dot-ring.active { animation: ring-pulse 2s infinite ease-out; }
+            /* 填充周围省份背景色，强化中国公鸡舆图的整体骨架感 */
+            .bg-province { fill: #c6dae3; }
+            .west-province { fill: #9bb7c6; }
+            .south-province { fill: #bdcfd8; }
 
-            /* 舆图古朴名签 */
-            .map-label {
-                font-size: 0.95rem; fill: #777777; opacity: 0.4;
-                transition: opacity 0.8s ease, fill 0.5s ease; 
-                font-family: 'KangXi', serif;
-                user-select: none;
+            /* 鼠标悬停时的优雅高亮提示 */
+            .interactive-prov { cursor: pointer; }
+            .interactive-prov:hover { fill: #86a9bc; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08)); }
+            
+            /* 🌟 核心视觉：点中激活后的省份转为惊艳的朱砂红 */
+            .interactive-prov.active {
+                fill: #962929 !important;
+                filter: drop-shadow(0 6px 12px rgba(150,41,41,0.2));
             }
-            .map-label.show { opacity: 1; fill: #1a1a1a; font-weight: bold; }
 
-            /* 🌟【扩大点击热区】隐形的大圆圈，确保手指和鼠标极其容易点中 */
-            .map-click-target {
-                fill: transparent; cursor: pointer; pointer-events: auto;
-            }
-            .map-click-target:hover + .map-label { opacity: 0.9; fill: #962929; }
-
-            /* 右侧极其稳固的原生纵向题跋纪行区 */
+            /* 左侧极其平稳的原生双排纵向题跋区 */
             .jixing-zone {
                 position: absolute; 
-                right: 52vw; /* 定位于屏幕中线左侧一点 */
-                top: 15vh; 
-                height: 70vh;
-                writing-mode: vertical-rl; /* 自右向左纵向流动 */
+                right: 54vw; /* 定位于地图左侧 */
+                top: 8vh; 
+                height: 84vh;
+                writing-mode: vertical-rl;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                pointer-events: none;
+            }
+            .jixing-row {
+                display: flex; flex-direction: column; /* 竖排文字下column即为横向向左平铺 */
+                align-items: flex-start; justify-content: flex-start;
+                height: 38vh; gap: 45px;
             }
             
             .jixing-column {
-                font-size: 1.1rem; 
-                color: #333333;
-                height: 100%;
-                display: inline-block; /* 稳固的横向并排 */
-                vertical-align: top;
-                margin-left: 50px; /* 每列题跋之间的黄金白地间距 */
-                white-space: nowrap;
+                font-size: 1.05rem; color: #333333; height: 100%;
+                white-space: nowrap; pointer-events: auto;
             }
-            
             .jixing-node-title {
-                font-weight: bold; 
-                color: #962929; 
-                margin-left: 15px; 
-                font-size: 1.2rem; 
-                display: block;
+                font-weight: bold; color: #962929; margin-left: 15px; font-size: 1.15rem;
             }
 
-            /* 正中央高雅收尾大字 */
             #lf-next-prompt {
-                position: absolute; 
-                top: 50%; left: 50%; 
-                transform: translate(-50%, -50%);
+                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                 font-size: 1.8rem; letter-spacing: 0.5em; color: #4a4a4a;
                 opacity: 0; transition: opacity 2s ease; cursor: pointer; display: none;
                 white-space: nowrap; text-align: center;
@@ -163,44 +123,59 @@ export default async function playLiangfeng(container) {
         </style>
 
         <div class="liangfeng-wrapper" id="lf-wrapper">
+            <!-- 幕一：大字居中 -->
             <div id="lf-title-screen" class="vertical-text font-kangxi">凉风</div>
 
+            <!-- 幕二：启幕词 -->
             <div id="lf-intro" class="vertical-text font-kangxi" style="display: none;">
                 凉风，西方风也。肃也。万物至此皆肃然而成也。<br>
                 属兑，八音为革。<br>
                 秋分之风。
             </div>
 
+            <!-- 幕三：全景舆图交互舞台 -->
             <div id="lf-content-stage">
-                <div class="map-zone">
-                    <svg class="map-svg" viewBox="0 0 500 500" preserveAspectRatio="xMidYMid meet">
-                        <path d="M 30,0 L 30,500 M 130,0 L 130,500 M 230,0 L 230,500 M 330,0 L 330,500 M 430,0 L 430,500" class="map-outline" />
-                        <path d="M 0,100 L 500,100 M 0,200 L 500,200 M 0,300 L 500,300 M 0,400 L 500,400" class="map-outline" />
-                        
-                        <path d="M 50,450 Q 150,420 200,360 T 380,330 T 480,260" class="map-coastline" />
-                        <path d="M 100,260 Q 220,240 280,300 T 450,280" class="map-coastline" />
-
-                        <path d="M 220,310 L 290,290 L 380,340 L 410,380 L 140,380" class="bg-route-line" />
-
-                        <line id="line-0-1" x1="220" y1="310" x2="290" y2="290" class="travel-line-seg" />
-                        <line id="line-1-2" x1="290" y1="290" x2="380" y2="340" class="travel-line-seg" />
-                        <line id="line-2-3" x1="380" y1="340" x2="410" y2="380" class="travel-line-seg" />
-                        <line id="line-3-4" x1="410" y1="380" x2="140" y2="380" class="travel-line-seg" />
-
-                        ${footprints.map((fp, idx) => `
-                            <g id="node-g-${idx}">
-                                <circle id="ring-${idx}" cx="${fp.coord.x}" cy="${fp.coord.y}" r="8" class="map-dot-ring" />
-                                <circle id="dot-${idx}" cx="${fp.coord.x}" cy="${fp.coord.y}" r="4.5" class="map-dot" />
-                                <text id="lbl-${idx}" x="${fp.coord.x + 12}" y="${fp.coord.y + 5}" class="map-label">${fp.name}</text>
-                                <circle class="map-click-target" cx="${fp.coord.x}" cy="${fp.coord.y}" r="22" id="target-${idx}" />
-                            </g>
-                        `).join('')}
-                    </svg>
+                <!-- 左侧双层物理题跋架 -->
+                <div class="jixing-zone">
+                    <div id="lf-row-top" class="jixing-row"></div>    <!-- 承接前三个点亮的省份 -->
+                    <div id="lf-row-bottom" class="jixing-row"></div> <!-- 承接后两个点亮的省份 -->
                 </div>
 
-                <div class="jixing-zone" id="lf-jixing-box"></div>
+                <!-- 右侧极简精美手绘分省地图 (等比例像素高度还原 image_381e7e 骨骼) -->
+                <div class="map-zone">
+                    <svg class="china-map-svg" viewBox="0 0 500 400" preserveAspectRatio="xMidYMid meet">
+                        <!-- 新疆、西藏、青海、内蒙等大西北背景轮廓 -->
+                        <path d="M 20,120 L 120,100 L 160,150 L 140,240 L 40,240 Z" class="province-block west-province" />
+                        <path d="M 40,240 L 140,240 L 180,210 L 210,260 L 150,330 L 50,320 Z" class="province-block west-province" />
+                        <path d="M 140,190 L 210,180 L 230,230 L 210,260 L 180,210 Z" class="province-block west-province" />
+                        <path d="M 120,100 L 260,110 L 320,80 L 300,140 L 210,180 Z" class="province-block bg-province" />
+                        
+                        <!-- 东北、华北、华南外围背景块 -->
+                        <path d="M 320,80 L 380,40 L 420,90 L 370,130 L 320,120 Z" class="province-block bg-province" />
+                        <path d="M 320,120 L 370,130 L 360,170 L 330,170 Z" class="province-block bg-province" />
+                        <path d="M 190,320 L 250,310 L 280,360 L 220,380 Z" class="province-block south-province" />
+                        <path d="M 250,310 L 320,310 L 340,350 L 280,360 Z" class="province-block south-province" />
+                        <path d="M 320,310 L 390,300 L 370,340 L 340,350 Z" class="province-block south-province" />
+
+                        <!-- 🌟 核心可交互省份一：四川（蜀道） -->
+                        <path id="prov-sichuan" d="M 150,240 L 230,230 L 250,310 L 190,320 Z" class="province-block interactive-prov" />
+                        
+                        <!-- 🌟 核心可交互省份二：陕西（长安） -->
+                        <path id="prov-shaanxi" d="M 230,160 L 270,150 L 260,240 L 230,230 Z" class="province-block interactive-prov" />
+                        
+                        <!-- 🌟 核心可交互省份三：河南（洛阳） -->
+                        <path id="prov-henan" d="M 270,170 L 330,170 L 320,220 L 260,220 Z" class="province-block interactive-prov" />
+                        
+                        <!-- 🌟 核心可交互省份四：江苏（金陵） -->
+                        <path id="prov-jiangsu" d="M 330,170 L 375,185 L 360,230 L 330,220 Z" class="province-block interactive-prov" />
+                        
+                        <!-- 🌟 核心可交互省份五：浙江（临安） -->
+                        <path id="prov-zhejiang" d="M 350,230 L 385,235 L 375,285 L 340,270 Z" class="province-block interactive-prov" />
+                    </svg>
+                </div>
             </div>
 
+            <!-- 结束引线 -->
             <div id="lf-next-prompt" class="font-kangxi">凉风至。君子结庐。</div>
         </div>
     `;
@@ -231,95 +206,83 @@ export default async function playLiangfeng(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：全景舆图手动探访 ======
+    // ====== 第三幕：全景分省舆图手动点击 ======
     contentStage.style.display = 'block';
     await wait(50);
     contentStage.style.opacity = 1;
 
-    // 🌟 维护一个纯粹的绝对顺序计数器，锁定诗句其一到其五的完美流向
-    let currentRevealedIndex = 0;
+    let currentRevealedCount = 0;
+    const clickedProvinces = new Set();
 
-    // 用来记录哪些站点已经被点亮过，防止观者重复点击同一个点刷数据
-    const activatedNodes = new Set();
+    const provIds = ['prov-shaanxi', 'prov-henan', 'prov-jiangsu', 'prov-zhejiang', 'prov-sichuan'];
+    const provKeys = ['shaanxi', 'henan', 'jiangsu', 'zhejiang', 'sichuan'];
 
-    // 为 5 个大靶心依次挂载手动点击监听
-    for (let i = 0; i < 5; i++) {
-        const target = document.getElementById(`target-${i}`);
-        target.addEventListener('click', async (e) => {
+    provIds.forEach((id, idx) => {
+        const provBlock = document.getElementById(id);
+        const key = provKeys[idx];
+        const item = provinceData[key];
+
+        provBlock.addEventListener('click', async (e) => {
             e.stopPropagation();
             
-            // 如果这个省/城市已经亮过了，直接拦截，不做重复处理
-            if (activatedNodes.has(i)) return;
-            activatedNodes.add(i);
+            // 拦截重复点击
+            if (clickedProvinces.has(key)) return;
+            clickedProvinces.add(key);
 
-            // 1. 瞬间点亮地图上的视觉元素
-            const dot = document.getElementById(`dot-${i}`);
-            const ring = document.getElementById(`ring-${i}`);
-            const lbl = document.getElementById(`lbl-${i}`);
-            
-            dot.classList.add('bloom');
-            lbl.classList.add('show');
-            ring.classList.add('active');
+            // 1. 瞬间将当前省份渲染为醒目的朱砂红
+            provBlock.classList.add('active');
 
-            // 2. 🌟 智能绘制连线：如果上一站也被点亮了，就自动画出它们之间的红色连线纽带
-            if (i > 0 && activatedNodes.has(i - 1)) {
-                const lineSeg = document.getElementById(`line-${i-1}-${i}`);
-                if (lineSeg) lineSeg.classList.add('draw');
-            }
-            if (i < 4 && activatedNodes.has(i + 1)) {
-                const lineSeg = document.getElementById(`line-${i}-${i+1}`);
-                if (lineSeg) lineSeg.classList.add('draw');
-            }
-
-            // 3. 右侧严谨生出本站对应的游历诗句
-            const item = footprints[i];
+            // 2. 左侧独立双轨生成题跋列
             const poemColumn = document.createElement('div');
-            poemColumn.className = 'jixing-column';
-            
-            // 题跋小标题序号借用 currentRevealedIndex 保持美感秩序
-            const titles = ['其一', '其二', '其三', '其四', '其五'];
-            const currentTitle = titles[currentRevealedIndex];
-            currentRevealedIndex++;
+            poemColumn.className = 'poem-column';
+            poemColumn.style.writingMode = 'vertical-rl';
+            poemColumn.style.fontSize = '1.05rem';
+            poemColumn.style.height = '100%';
+            poemColumn.style.display = 'inline-block';
+            poemColumn.style.verticalAlign = 'top';
+            poemColumn.style.whiteSpace = 'nowrap';
 
+            // 按照点击出的先后顺序显示其一到其五
+            const titlePrefixes = ['其一', '其二', '其三', '其四', '其五'];
+            const currentPrefix = titlePrefixes[currentRevealedCount];
+            
             poemColumn.innerHTML = `
-                <span class="jixing-node-title font-kangxi">${currentTitle} · ${item.name}</span>
-                <span style="line-height: 2.3; letter-spacing: 0.15em;">${convertToSpans(item.text)}</span>
+                <div class="jixing-node-title font-kangxi">${currentPrefix} · ${item.name}</div>
+                <div style="line-height: 2.3; letter-spacing: 0.15em; margin-top: 10px;">${convertToSpans(item.text)}</div>
             `;
-            
-            jixingBox.appendChild(poemColumn);
 
-            // 驱动字迹手写洇出
+            // 分轨排布：前3个去上排，后2个去下排，绝对不出界
+            if (currentRevealedCount < 3) {
+                document.getElementById('lf-row-top').appendChild(poemColumn);
+            } else {
+                document.getElementById('lf-row-bottom').appendChild(poemColumn);
+            }
+
+            currentRevealedCount++;
+
+            // 3. 驱动毛笔字迹渐显
             await revealText(poemColumn, 45);
 
-            // 4. 当 5 个城市全部被观者亲自抚点亮起，开启最终谢幕
-            if (activatedNodes.size === 5) {
-                await wait(5000); // 留出充足时间供观者把玩长卷舆图
+            // 4. 当五个核心省份全部被点亮，画卷谢幕
+            if (clickedProvinces.size === 5) {
+                await wait(5000);
                 
-                // 舆图与诗列优雅隐退
-                const stage = document.getElementById('lf-content-stage');
-                stage.style.opacity = 0;
-                stage.style.transition = 'opacity 2.5s ease';
+                // 长卷全清空
+                contentStage.style.opacity = 0;
+                contentStage.style.transition = 'opacity 2.5s ease';
                 await wait(2500);
-                stage.innerHTML = ''; // 清空释放空间
+                contentStage.innerHTML = '';
 
-                // 亮起正中央最终引线大字
+                // 唤醒正中央结束语
                 nextPrompt.style.display = 'block';
                 await wait(50);
                 nextPrompt.style.opacity = 1;
             }
         });
-    }
-
-    // 强力阻塞控制：只有在最后出场词完全显现后，点击大背景才允许跨入下一章
-    const finalExiter = new Promise(resolveExit => {
-        wrapper.addEventListener('click', () => {
-            if (nextPrompt.style.opacity === '1') {
-                resolveExit();
-            }
-        });
     });
 
-    await finalExiter;
+    // 锁死最后的背景离场点击
+    await nextClick(wrapper);
     container.classList.remove('active');
     await wait(2500);
     container.innerHTML = '';
