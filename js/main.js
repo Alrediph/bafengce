@@ -1,10 +1,10 @@
 // js/main.js
-import playPrologue from './chapters/prologue.js?v=3';
-import playMingshu from './chapters/mingshu.js?v=3';
-import playQingming from './chapters/qingming.js?v=3';
-import playJingfeng from './chapters/jingfeng.js?v=3';
-import playLiangfeng from './chapters/liangfeng.js?v=3';
-import playChanghe from './chapters/changhe.js?v=3'; // 🌟 引入结合完美的第五开
+import playPrologue from './chapters/prologue.js';
+import playMingshu from './chapters/mingshu.js';
+import playQingming from './chapters/qingming.js';
+import playJingfeng from './chapters/jingfeng.js';
+import playLiangfeng from './chapters/liangfeng.js';
+import playChanghe from './chapters/changhe.js'; // 🌟 引入结合完美的第五开
 
 async function init() {
     const prologueContainer = document.getElementById('prologue');
