@@ -3,14 +3,16 @@ import playPrologue from './chapters/prologue.js?v=3';
 import playMingshu from './chapters/mingshu.js?v=3';
 import playQingming from './chapters/qingming.js?v=3';
 import playJingfeng from './chapters/jingfeng.js?v=3';
-import playLiangfeng from './chapters/liangfeng.js?v=3'; // 🌟 引入全新第四开
+import playLiangfeng from './chapters/liangfeng.js?v=3';
+import playChanghe from './chapters/changhe.js?v=3'; // 🌟 引入结合完美的第五开
 
 async function init() {
     const prologueContainer = document.getElementById('prologue');
     const mingshuContainer = document.getElementById('chapter-1');
     const qingmingContainer = document.getElementById('chapter-2');
     const jingfengContainer = document.getElementById('chapter-3');
-    const liangfengContainer = document.getElementById('chapter-4'); // 🌟 锁定第四开容器
+    const liangfengContainer = document.getElementById('chapter-4');
+    const changheContainer = document.getElementById('chapter-5'); // 锁定第五开容器
 
     // 1. 序幕
     await playPrologue(prologueContainer);
@@ -26,6 +28,9 @@ async function init() {
 
     // 5. 第四开 · 凉风
     await playLiangfeng(liangfengContainer);
+
+    // 6. 第五开 · 阊阖风
+    await playChanghe(changheContainer);
 }
 
 window.addEventListener('DOMContentLoaded', init);
