@@ -34,7 +34,7 @@ export default async function playJingfeng(container) {
                 transition: opacity 2s ease; position: relative;
             }
 
-            /* 【完美修复】仿 image_365fe7 3D六角形等轴测签筒定位 */
+            /* 3D六角形等轴测签筒定位 */
             .cylinder-container {
                 position: absolute; top: 24%; left: 50%; transform: translateX(-50%);
                 width: 130px; height: 240px; cursor: pointer;
@@ -49,7 +49,7 @@ export default async function playJingfeng(container) {
                 pointer-events: none;
             }
 
-            /* 筒身剧烈连带颤晃 */
+            /* 筒身震颤 */
             @keyframes cylinder-shake {
                 0%, 100% { transform: translateX(-50%) rotate(0deg); }
                 15% { transform: translateX(-54%) rotate(-9deg) translateY(-2px); }
@@ -61,14 +61,14 @@ export default async function playJingfeng(container) {
             }
             .shaking { animation: cylinder-shake 0.6s ease-in-out; }
 
-            /* 【完美复刻实物照片】精美双层红呢滚边洒金笺纸卡片结构 */
+            /* 双层红呢滚边洒金笺纸卡片结构 */
             .fortune-card-wrapper {
                 position: absolute; top: 50%; left: 50%;
                 transform: translate(-50%, -45%) scale(0.9);
                 opacity: 0; pointer-events: none;
                 transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1s ease;
                 
-                background-color: #962929; /* 实物大红衬底呢纸色 */
+                background-color: #962929; /* 大红衬底呢纸色 */
                 padding: 16px 20px;
                 border-radius: 4px;
                 box-shadow: 0 20px 50px rgba(50,15,15,0.2);
@@ -80,14 +80,14 @@ export default async function playJingfeng(container) {
             }
 
             .fortune-card-inner {
-                background-color: #faf6ed; /* 纯正素雅宣纸色 */
+                background-color: #faf6ed; /* 素雅宣纸色 */
                 border: 1px solid #e1d7be;
-                padding: 30px 35px 35px 35px;
+                padding: 30px 30px 35px 30px;
                 width: 350px; min-height: 460px;
                 box-sizing: border-box;
                 position: relative;
                 
-                /* 【高级内敛】纯CSS粒子级模拟高档洒金宣纸纹理 */
+                /* 纯CSS模拟洒金宣纸纹理 */
                 background-image: 
                     radial-gradient(rgba(218,165,32,0.22) 1px, transparent 0), 
                     radial-gradient(rgba(218,165,32,0.18) 1.5px, transparent 0);
@@ -96,7 +96,7 @@ export default async function playJingfeng(container) {
                 box-shadow: inset 0 0 30px rgba(235,220,190,0.35);
             }
 
-            /* 签额头：横排剧目 */
+            /* 签头：横排 */
             .card-header-title {
                 font-size: 1.55rem; font-weight: bold; color: #962929;
                 letter-spacing: 0.5em; padding-bottom: 12px; margin-right: -0.5em;
@@ -106,30 +106,33 @@ export default async function playJingfeng(container) {
                 width: 100%; border-top: 1px dashed #962929; margin-bottom: 30px; opacity: 0.5;
             }
 
-            /* 【终极修复】死锁纵向原生分栏模型，坚决不允许重叠与倒向 */
+            /* 纵向原生块级流动分栏模型 */
             .card-body-columns {
-                writing-mode: vertical-rl; /* 强制自右向左纵向流动 */
+                writing-mode: vertical-rl; 
                 height: 270px; width: 100%;
                 box-sizing: border-box;
-                padding-right: 10px;
+                padding-right: 15px; /* 让整体内容稍微左移，居中分布 */
             }
 
             .card-section {
-                display: inline-block; /* 保证在vertical-rl容器中横向稳固并排 */
+                display: inline-block; 
                 vertical-align: top;
                 height: 100%;
             }
-            /* 诗曰与解曰之间留出极具呼吸感的黄金长白间隔 */
-            .card-section.poem-zone { margin-left: 55px; } 
+            
+            /* 🌟【微调核心一】诗曰与解曰之间的横向列间距从 55px 缩小到 24px，防止解曰出界 */
+            .card-section.poem-zone { margin-left: 24px; } 
             
             .section-lbl {
                 font-weight: bold; color: #962929; font-size: 1.15rem;
-                margin-left: 15px; display: block; font-family: 'KangXi', serif;
+                margin-left: 10px; /* 🌟【微调核心二】标签与正文的横向间距从 15px 紧缩到 10px */
+                display: block; font-family: 'KangXi', serif;
                 border-left: 1px solid rgba(150,41,41,0.25);
                 padding-left: 4px;
             }
             .section-txt {
-                font-size: 1.05rem; color: #2c2c2c; line-height: 2.4;
+                font-size: 1.05rem; color: #2c2c2c; 
+                line-height: 2.1; /* 🌟【微调核心三】文字行间距从 2.4 优化至 2.1，使多行诗句排布更紧凑工整 */
                 letter-spacing: 0.16em; display: block; white-space: nowrap;
             }
 
@@ -193,9 +196,7 @@ export default async function playJingfeng(container) {
                         <polygon points="35,60 55,75 55,210 35,195" fill="url(#face-left-grad)" stroke="#967739" stroke-width="0.4" />
                         <polygon points="55,75 85,75 85,210 55,210" fill="url(#face-center-grad)" stroke="#967739" stroke-width="0.4" />
                         <polygon points="85,75 105,60 105,195 85,210" fill="url(#face-right-grad)" stroke="#7e6027" stroke-width="0.4" />
-                        
                         <polygon points="35,60 55,45 85,45 105,60 85,75 55,75" fill="url(#top-cap-grad)" stroke="#281a0e" stroke-width="0.4" />
-                        
                         <circle cx="70" cy="60" r="4.5" fill="#140c06" />
                         
                         <line x1="45" y1="80" x2="45" y2="180" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" />
@@ -276,12 +277,10 @@ export default async function playJingfeng(container) {
             await wait(500);
         }
 
-        // 触发高级3D连带震颤
         cylinder.classList.add('shaking');
         await wait(620); 
         cylinder.classList.remove('shaking');
 
-        // 查重随机算法
         let randomIndex = Math.floor(Math.random() * allSigns.length);
         while (randomIndex === lastSignIndex) {
             randomIndex = Math.floor(Math.random() * allSigns.length);
@@ -291,12 +290,10 @@ export default async function playJingfeng(container) {
 
         const drawnSign = allSigns[randomIndex];
 
-        // 完美填充
         slotTitle.innerText = `第 ${drawnSign.num} 签 · 上上`;
         slotPoem.innerHTML = drawnSign.poem;
         slotReply.innerHTML = drawnSign.reply;
 
-        // 弹起显现
         cardWrap.classList.add('reveal');
 
         if (totalDrawnCount >= 3) {
