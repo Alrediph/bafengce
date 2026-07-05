@@ -58,7 +58,8 @@ export default async function playMingshu(container) {
 
             .folding-book {
                 display: flex;
-                flex-direction: row-reverse; /* 古籍从右往左流动的经典秩序 */
+                /* 【核心修复】在竖排文字下，column 才是真正的从右往左横向并排 */
+                flex-direction: column; 
                 overflow-x: auto;
                 overflow-y: hidden;
                 width: auto;
@@ -79,13 +80,14 @@ export default async function playMingshu(container) {
                 border-left: 1px dashed #e2e2e2; /* 经折装的虚线折痕 */
                 padding: 0 45px;
                 height: 100%;
-                flex-shrink: 0; /* 【核心修复】死锁宽度，坚决防止折页被挤压或垂直错位 */
+                flex-shrink: 0; /* 死锁宽度，坚决防止折页被挤压 */
                 display: flex;
-                flex-direction: column;
+                flex-direction: column; /* 内部文字行依然按照古籍秩序从右往左排 */
                 justify-content: flex-start;
             }
             
-            .fold-page.cover-page {
+            /* 最后一页（最左边的末页）不需要左边折痕 */
+            .fold-page.last-page {
                 border-left: none;
                 justify-content: center;
                 align-items: center;
@@ -94,51 +96,43 @@ export default async function playMingshu(container) {
         </style>
 
         <div class="mingshu-wrapper" id="ms-wrapper">
-            <!-- 【新加幕】“明庶”二字居中 -->
             <div id="ms-title-screen" class="vertical-text font-kangxi">明庶</div>
 
-            <!-- 幕二：启幕词 -->
             <div id="ms-intro" class="vertical-text font-kangxi" style="display: none;">
                 明庶风，东方风也。庶，众也。风以生物，明众物尽出也。<br>
                 属震，八音为竹。<br>
                 春分之风。
             </div>
 
-            <!-- 幕三：横排折子正文 -->
             <div id="ms-book-container" style="display: none;">
                 <div class="folding-book vertical-text">
-                    <!-- 末页 (最左边，收尾) -->
-                    <div class="fold-page cover-page">
-                        <div class="font-kangxi" style="font-size: 1.25rem; font-weight: bold; letter-spacing: 0.3em;">明庶风至。君子如竹。</div>
-                    </div>
-                    <!-- 第四折 -->
                     <div class="fold-page">
-                        <div class="font-kangxi" style="font-size: 1.3rem; font-weight: bold;">君子和而不同。</div>
-                        <div style="font-size: 0.95rem; color: #7a7a7a; margin-right: 15px; font-family: serif;">——《论语·子路》</div>
-                        <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">八风各至，不相扰也。</div>
+                        <div class="font-kangxi" style="font-size: 1.3rem; font-weight: bold;">君子以明庶政，无敢折狱。</div>
+                        <div style="font-size: 0.95rem; color: #7a7a7a; margin-right: 15px; font-family: serif;">——《象》曰山下有火，贲。</div>
+                        <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">山下有火，其辉有度。</div>
                     </div>
-                    <!-- 第三折 -->
-                    <div class="fold-page">
-                        <div class="font-kangxi" style="font-size: 1.3rem; font-weight: bold;">君子不器。</div>
-                        <div style="font-size: 0.95rem; color: #7a7a7a; margin-right: 15px; font-family: serif;">——《论语·为政》</div>
-                        <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">风无定形，万形皆可。</div>
-                    </div>
-                    <!-- 第二折 -->
                     <div class="fold-page">
                         <div class="font-kangxi" style="font-size: 1.3rem; font-weight: bold;">君子之德风。</div>
                         <div style="font-size: 0.95rem; color: #7a7a7a; margin-right: 15px; font-family: serif;">——孔子</div>
                         <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">风行草上，万物从之。</div>
                     </div>
-                    <!-- 第一折 (最右边，入场首折) -->
-                    <div class="fold-page" style="border-right: none;">
-                        <div class="font-kangxi" style="font-size: 1.3rem; font-weight: bold;">君子以明庶政，无敢折狱。</div>
-                        <div style="font-size: 0.95rem; color: #7a7a7a; margin-right: 15px; font-family: serif;">——《象》曰山下有火，贲。</div>
-                        <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">山下有火，其辉有度。</div>
+                    <div class="fold-page">
+                        <div class="fold-page">
+                        <div class="font-kangxi" style="font-size: 1.3rem; font-weight: bold;">君子不器。</div>
+                        <div style="font-size: 0.95rem; color: #7a7a7a; margin-right: 15px; font-family: serif;">——《论语·为政》</div>
+                        <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">风无定形，万形皆可。</div>
+                    </div>
+                    <div class="fold-page">
+                        <div class="font-kangxi" style="font-size: 1.3rem; font-weight: bold;">君子和而不同。</div>
+                        <div style="font-size: 0.95rem; color: #7a7a7a; margin-right: 15px; font-family: serif;">——《论语·子路》</div>
+                        <div style="font-size: 1.1rem; color: #4a4a4a; margin-right: 15px;">八风各至，不相扰也。</div>
+                    </div>
+                    <div class="fold-page last-page">
+                        <div class="font-kangxi" style="font-size: 1.25rem; font-weight: bold; letter-spacing: 0.3em;">明庶风至。君子如竹。</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 旁注 -->
             <div class="font-kangxi" style="position: absolute; bottom: 4%; right: 4%; font-size: 0.8rem; color: #cccccc; writing-mode: vertical-rl; letter-spacing: 0.1em;">震 · 竹</div>
         </div>
     `;
@@ -172,11 +166,9 @@ export default async function playMingshu(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：真正的横排折子作为一个整体浮现 ======
+    // ====== 第三幕：真正的横排折子平铺浮现 ======
     bookContainer.style.display = 'flex';
     await wait(50);
     bookContainer.style.opacity = 1;
     bookContainer.classList.add('active');
-    
-    // 至此，折子静静并排平铺在画布上，用户可以自由地横向滑动/滚轮品读
 }
