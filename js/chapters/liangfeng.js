@@ -5,7 +5,7 @@ const nextClick = (element) => new Promise(resolve => {
     element.addEventListener('click', resolve, { once: true });
 });
 
-// 辅助函数：细腻的墨迹渐显效果
+// 辅助函数：墨迹一笔一划渐显
 function convertToSpans(htmlString) {
     let result = '';
     let inTag = false;
@@ -21,7 +21,7 @@ function convertToSpans(htmlString) {
     return result;
 }
 
-function revealText(element, speed = 45) {
+function revealText(element, speed = 40) {
     const chars = element.querySelectorAll('.char-ink');
     let delay = 0;
     chars.forEach((char) => {
@@ -35,14 +35,33 @@ function revealText(element, speed = 45) {
 }
 
 export default async function playLiangfeng(container) {
-    // 将诗句与具体的行政行省进行死锁绑定
-    const provinceData = {
-        'shaanxi': { name: '陕西 · 长安', text: '秋风吹渭水，<br>落叶满长安。' },
-        'henan':   { name: '河南 · 洛阳', text: '洛阳城里见秋风，<br>欲作家书意万重。' },
-        'jiangsu': { name: '江苏 · 金陵', text: '金陵夜寂凉风发，<br>独上高楼望吴越。' },
-        'zhejiang':{ name: '浙江 · 临安', text: '山外青山楼外楼，<br>西湖歌舞几时休。' },
-        'sichuan': { name: '四川 · 蜀道', text: '长风万里送秋雁，<br>对此可以酣高楼。' }
-    };
+    // 完整录入定稿的内地十八省三页数据大盘
+    const pagesData = [
+        [
+            { id: 'zhili',    name: '直隶', poem: '燕山雪花大如席，片片吹落轩辕台。', author: '——李白《北风行》', note: '京华烟云，长城内外。' },
+            { id: 'shandong', name: '山东', poem: '会当凌绝顶，一览众山小。', author: '——杜甫《望岳》', note: '泰山岩岩，鲁邦所瞻。' },
+            { id: 'henan',    name: '河南', poem: '黄河远上白云间，一片孤城万仞山。', author: '——王之涣《凉州词》', note: '中原故土，河洛风烟。' },
+            { id: 'shanxi1',  name: '山西', poem: '白日依山尽，黄河入海流。', author: '——王之涣《登鹳雀楼》', note: '表里山河，晋商古道。' },
+            { id: 'shaanxi',  name: '陕西', poem: '长安一片月，万户捣衣声。', author: '——李白《子夜吴歌》', note: '秦川历历，汉阙犹存。' },
+            { id: 'gansu',    name: '甘肃', poem: '羌笛何须怨杨柳，春风不度玉门关。', author: '——王之涣《凉州词》', note: '河西走廊，丝路驼铃。' }
+        ],
+        [
+            { id: 'jiangsu',  name: '江苏', poem: '姑苏城外寒山寺，夜半钟声到客船。', author: '——张继《枫桥夜泊》', note: '金陵旧梦，吴门烟水。' },
+            { id: 'anhui',    name: '安徽', poem: '五岳归来不看山，黄山归来不看岳。', author: '——徐霞客', note: '徽岭白岳，水墨人家。' },
+            { id: 'zhejiang', name: '浙江', poem: '三秋桂子，十里荷花。', author: '——柳永《望海潮》', note: '西湖烟雨，之江潮生。' },
+            { id: 'jiangxi',  name: '江西', poem: '落霞与孤鹜齐飞，秋水共长天一色。', author: '——王勃《滕王阁序》', note: '赣江悠悠，匡庐云雾。' },
+            { id: 'hubei',    name: '湖北', poem: '黄鹤一去不复返，白云千载空悠悠。', author: '——崔颢《黄鹤楼》', note: '荆楚大地，云梦遗泽。' },
+            { id: 'hunan',    name: '湖南', poem: '洞庭波涌连天雪，长岛人歌动地诗。', author: '——毛泽东', note: '潇湘夜雨，岳麓书声。' }
+        ],
+        [
+            { id: 'sichuan',  name: '四川', poem: '蜀道之难，难于上青天。', author: '——李白《蜀道难》', note: '巴山夜雨，锦城花重。' },
+            { id: 'fujian',   name: '福建', poem: '海日生残夜，江春入旧年。', author: '——王湾《次北固山下》', note: '闽山苍苍，海波不惊。' },
+            { id: 'guangdong',name: '广东', poem: '罗浮山下四时春，乘橘杨梅次第新。', author: '——苏轼《食荔枝》', note: '岭南风暖，潮汕月明。' },
+            { id: 'guangxi',  name: '广西', poem: '江作青罗带，山如碧玉簪。', author: '——韩愈《送桂州严大夫》', note: '桂林山水，八桂烟霞。' },
+            { id: 'yunnan',   name: '云南', poem: '天气常如二三月，花枝不断四时春。', author: '——杨慎《滇海曲》', note: '苍山洱海，彩云之南。' },
+            { id: 'guizhou',  name: '贵州', poem: '天无三日晴，地无三里平。', author: '——民谚', note: '黔山万壑，苗岭侗歌。' }
+        ]
+    ];
 
     container.innerHTML = `
         <style>
@@ -56,127 +75,142 @@ export default async function playLiangfeng(container) {
             
             #lf-content-stage {
                 width: 100%; height: 100%; display: none; opacity: 0;
-                transition: opacity 2s ease; position: relative;
+                transition: opacity 1.8s ease; position: relative;
             }
 
-            /* 右侧中国分省写意舆图区（完美对齐 image_381e7e 的质感） */
-            .map-zone {
-                position: absolute; right: 4%; top: 12%; width: 52vw; height: 76vh;
-            }
-            .china-map-svg { width: 100%; height: 100%; }
-            
-            /* 省份基础区块：复刻实物图的清爽灰蓝色调，白边勾勒 */
-            .province-block {
-                fill: #abc4d0;
-                stroke: #ffffff;
-                stroke-width: 1.5;
-                transition: fill 0.4s ease, filter 0.4s ease;
+            /* 【完美复刻刻本总目】大框格：清代木刻版画“四周双边”视觉秩序 */
+            .woodblock-catalog-container {
+                width: 82vw; height: 68vh;
+                border: 4px double #1a1a1a; /* 复刻刻本粗细双线外框 */
+                padding: 12px;
+                position: relative;
+                background-color: #faf7f0; /* 素雅微黄的宣纸老纸色 */
+                box-shadow: inset 0 0 40px rgba(215,200,180,0.25);
             }
             
-            /* 填充周围省份背景色，强化中国公鸡舆图的整体骨架感 */
-            .bg-province { fill: #c6dae3; }
-            .west-province { fill: #9bb7c6; }
-            .south-province { fill: #bdcfd8; }
-
-            /* 鼠标悬停时的优雅高亮提示 */
-            .interactive-prov { cursor: pointer; }
-            .interactive-prov:hover { fill: #86a9bc; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08)); }
-            
-            /* 🌟 核心视觉：点中激活后的省份转为惊艳的朱砂红 */
-            .interactive-prov.active {
-                fill: #962929 !important;
-                filter: drop-shadow(0 6px 12px rgba(150,41,41,0.2));
-            }
-
-            /* 左侧极其平稳的原生双排纵向题跋区 */
-            .jixing-zone {
-                position: absolute; 
-                right: 54vw; /* 定位于地图左侧 */
-                top: 8vh; 
-                height: 84vh;
-                writing-mode: vertical-rl;
+            /* 刻本内页大舞台：死锁自右向左的流动 */
+            .woodblock-page-canvas {
+                width: 100%; height: 100%;
+                writing-mode: vertical-rl; /* 强制古籍竖排秩序 */
                 display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                pointer-events: none;
-            }
-            .jixing-row {
-                display: flex; flex-direction: column; /* 竖排文字下column即为横向向左平铺 */
-                align-items: flex-start; justify-content: flex-start;
-                height: 38vh; gap: 45px;
-            }
-            
-            .jixing-column {
-                font-size: 1.05rem; color: #333333; height: 100%;
-                white-space: nowrap; pointer-events: auto;
-            }
-            .jixing-node-title {
-                font-weight: bold; color: #962929; margin-left: 15px; font-size: 1.15rem;
+                flex-direction: column; /* 竖排模式下，column代表横向自右向左平铺并排 */
+                justify-content: flex-start;
+                align-items: flex-start;
             }
 
-            #lf-next-prompt {
-                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                font-size: 1.8rem; letter-spacing: 0.5em; color: #4a4a4a;
-                opacity: 0; transition: opacity 2s ease; cursor: pointer; display: none;
-                white-space: nowrap; text-align: center;
+            /* 省份实体栏：木刻隔线线框 */
+            .woodblock-prov-column {
+                height: 100%;
+                display: inline-block;
+                vertical-align: top;
+                border-left: 1px solid #dcd1be; /* 刻本直格间的细墨线 */
+                transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+                width: 70px; /* 初始闭合时的窄列身宽度 */
+                overflow: hidden;
+                white-space: nowrap;
+                position: relative;
+            }
+            
+            /* 最右侧第一列不需要左框 */
+            .woodblock-prov-column:first-child { border-right: none; }
+
+            /* 大字省份名：点击按钮区 */
+            .prov-clickable-header {
+                height: 100%;
+                width: 70px;
+                display: block;
+                text-align: center;
+                cursor: pointer;
+                padding-top: 40px;
+                box-sizing: border-box;
+                user-select: none;
+                position: absolute; right: 0; top: 0; z-index: 5;
+            }
+            .prov-large-name {
+                font-size: 1.8rem; font-weight: bold; color: #1a1a1a;
+                letter-spacing: 0.2em; transition: color 0.3s ease;
+            }
+            .prov-clickable-header:hover .prov-large-name { color: #962929; }
+
+            /* 【折子横铺核心机制】隐藏的内容区：初始宽度为0 */
+            .prov-folded-content {
+                height: 100%;
+                margin-right: 70px; /* 完美避开右侧常驻的大字省份名 */
+                opacity: 0;
+                width: 0;
+                transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+                display: block;
+                box-sizing: border-box;
+                padding: 40px 25px 30px 25px;
+                background-color: #f7f2e8; /* 展开内芯稍微下陷的宣纸微色差 */
+            }
+
+            /* 当某省被点中激活动态拓宽状态 */
+            .woodblock-prov-column.active {
+                width: 250px; /* 横向优雅撑开爆展 */
+                background-color: #faf6eb;
+            }
+            .woodblock-prov-column.active .prov-large-name {
+                color: #962929; /* 激活转为朱砂红印泥色 */
+            }
+            .woodblock-prov-column.active .prov-folded-content {
+                width: 180px; opacity: 1; pointer-events: auto;
+            }
+
+            /* 内部展开的小字行气 */
+            .inner-poem-row {
+                font-size: 1.15rem; color: #2c2c2c; line-height: 2.2;
+                letter-spacing: 0.15em; display: block; margin-left: 12px;
+            }
+            .inner-author-row {
+                font-size: 0.85rem; color: #777777; display: block;
+                margin-left: 20px; text-align: left; margin-bottom: 25px;
+            }
+            .inner-footnote-row {
+                font-size: 0.95rem; color: #8c7355; font-weight: bold;
+                line-height: 2; letter-spacing: 0.12em; display: block;
+                border-right: 1px dashed rgba(140,115,85,0.25); padding-right: 6px;
+            }
+
+            /* 仿刻本典雅左右切换翻页按钮 */
+            .woodblock-page-btn {
+                position: absolute; bottom: -65px;
+                font-size: 1.05rem; letter-spacing: 0.2em; color: #777777;
+                cursor: pointer; user-select: none; transition: color 0.3s ease;
+            }
+            .woodblock-page-btn:hover { color: #962929; font-weight: bold; }
+            #btn-prev-page { right: 80px; }
+            #btn-next-page { right: 0px; }
+            .btn-disabled { opacity: 0.2 !important; pointer-events: none !important; }
+
+            /* 【定稿终章】画面左下角手书小楷 */
+            #lf-final-handwritten {
+                position: absolute; left: 0; bottom: -60px;
+                font-size: 1rem; letter-spacing: 0.2em; color: #bbbbbb;
+                opacity: 0; transition: opacity 2s ease;
+                white-space: nowrap; pointer-events: none;
             }
         </style>
 
         <div class="liangfeng-wrapper" id="lf-wrapper">
-            <!-- 幕一：大字居中 -->
             <div id="lf-title-screen" class="vertical-text font-kangxi">凉风</div>
 
-            <!-- 幕二：启幕词 -->
             <div id="lf-intro" class="vertical-text font-kangxi" style="display: none;">
-                凉风，西方风也。肃也。万物至此皆肃然而成也。<br>
-                属兑，八音为革。<br>
-                秋分之风。
+                凉风，西南风也。凉，寒也。阴气始行，微敛也。<br>
+                属坤，八音为土。<br>
+                立秋之风。
             </div>
 
-            <!-- 幕三：全景舆图交互舞台 -->
             <div id="lf-content-stage">
-                <!-- 左侧双层物理题跋架 -->
-                <div class="jixing-zone">
-                    <div id="lf-row-top" class="jixing-row"></div>    <!-- 承接前三个点亮的省份 -->
-                    <div id="lf-row-bottom" class="jixing-row"></div> <!-- 承接后两个点亮的省份 -->
-                </div>
+                <div class="woodblock-catalog-container">
+                    <div class="woodblock-page-canvas" id="woodblock-canvas"></div>
+                    
+                    <div class="woodblock-page-btn font-kangxi" id="btn-prev-page">【 前卷 】</div>
+                    <div class="woodblock-page-btn font-kangxi" id="btn-next-page">【 次卷 】</div>
 
-                <!-- 右侧极简精美手绘分省地图 (等比例像素高度还原 image_381e7e 骨骼) -->
-                <div class="map-zone">
-                    <svg class="china-map-svg" viewBox="0 0 500 400" preserveAspectRatio="xMidYMid meet">
-                        <!-- 新疆、西藏、青海、内蒙等大西北背景轮廓 -->
-                        <path d="M 20,120 L 120,100 L 160,150 L 140,240 L 40,240 Z" class="province-block west-province" />
-                        <path d="M 40,240 L 140,240 L 180,210 L 210,260 L 150,330 L 50,320 Z" class="province-block west-province" />
-                        <path d="M 140,190 L 210,180 L 230,230 L 210,260 L 180,210 Z" class="province-block west-province" />
-                        <path d="M 120,100 L 260,110 L 320,80 L 300,140 L 210,180 Z" class="province-block bg-province" />
-                        
-                        <!-- 东北、华北、华南外围背景块 -->
-                        <path d="M 320,80 L 380,40 L 420,90 L 370,130 L 320,120 Z" class="province-block bg-province" />
-                        <path d="M 320,120 L 370,130 L 360,170 L 330,170 Z" class="province-block bg-province" />
-                        <path d="M 190,320 L 250,310 L 280,360 L 220,380 Z" class="province-block south-province" />
-                        <path d="M 250,310 L 320,310 L 340,350 L 280,360 Z" class="province-block south-province" />
-                        <path d="M 320,310 L 390,300 L 370,340 L 340,350 Z" class="province-block south-province" />
-
-                        <!-- 🌟 核心可交互省份一：四川（蜀道） -->
-                        <path id="prov-sichuan" d="M 150,240 L 230,230 L 250,310 L 190,320 Z" class="province-block interactive-prov" />
-                        
-                        <!-- 🌟 核心可交互省份二：陕西（长安） -->
-                        <path id="prov-shaanxi" d="M 230,160 L 270,150 L 260,240 L 230,230 Z" class="province-block interactive-prov" />
-                        
-                        <!-- 🌟 核心可交互省份三：河南（洛阳） -->
-                        <path id="prov-henan" d="M 270,170 L 330,170 L 320,220 L 260,220 Z" class="province-block interactive-prov" />
-                        
-                        <!-- 🌟 核心可交互省份四：江苏（金陵） -->
-                        <path id="prov-jiangsu" d="M 330,170 L 375,185 L 360,230 L 330,220 Z" class="province-block interactive-prov" />
-                        
-                        <!-- 🌟 核心可交互省份五：浙江（临安） -->
-                        <path id="prov-zhejiang" d="M 350,230 L 385,235 L 375,285 L 340,270 Z" class="province-block interactive-prov" />
-                    </svg>
+                    <div id="lf-final-handwritten" class="font-kangxi">君子之行，大地記之。</div>
                 </div>
             </div>
-
-            <!-- 结束引线 -->
-            <div id="lf-next-prompt" class="font-kangxi">凉风至。君子结庐。</div>
         </div>
     `;
 
@@ -184,20 +218,23 @@ export default async function playLiangfeng(container) {
     const titleScreen = document.getElementById('lf-title-screen');
     const intro = document.getElementById('lf-intro');
     const contentStage = document.getElementById('lf-content-stage');
-    const jixingBox = document.getElementById('lf-jixing-box');
-    const nextPrompt = document.getElementById('lf-next-prompt');
+    const canvas = document.getElementById('woodblock-canvas');
+    
+    const btnPrev = document.getElementById('btn-prev-page');
+    const btnNext = document.getElementById('btn-next-page');
+    const finalHandwritten = document.getElementById('lf-final-handwritten');
 
     container.classList.add('active');
     await wait(400);
 
-    // ====== 第一幕：“凉风”大字 ======
+    // ====== 第一幕：“凉风”大字居中 ======
     titleScreen.style.opacity = 1;
     await nextClick(wrapper);
     titleScreen.style.opacity = 0;
     await wait(2000);
     titleScreen.style.display = 'none';
 
-    // ====== 第二幕：启幕词 ======
+    // ====== 第二幕：启幕词徐徐亮起 ======
     intro.style.display = 'block';
     await wait(50);
     intro.style.opacity = 1;
@@ -206,84 +243,111 @@ export default async function playLiangfeng(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：全景分省舆图手动点击 ======
+    // ====== 第三幕：进入刻本总目交互长卷 ======
     contentStage.style.display = 'block';
     await wait(50);
     contentStage.style.opacity = 1;
 
-    let currentRevealedCount = 0;
-    const clickedProvinces = new Set();
+    let currentPageIndex = 0;
+    // 追踪总共点阅过多少个不同的省份，用来智能唤醒最终收束
+    const readProvincesPool = new Set();
 
-    const provIds = ['prov-shaanxi', 'prov-henan', 'prov-jiangsu', 'prov-zhejiang', 'prov-sichuan'];
-    const provKeys = ['shaanxi', 'henan', 'jiangsu', 'zhejiang', 'sichuan'];
+    // 核心渲染器：根据当前页码动态洗出6个省份直栏
+    function renderWoodblockPage(pageIdx) {
+        canvas.innerHTML = ''; // 清场
+        const currentList = pagesData[pageIdx];
 
-    provIds.forEach((id, idx) => {
-        const provBlock = document.getElementById(id);
-        const key = provKeys[idx];
-        const item = provinceData[key];
+        currentList.forEach((prov) => {
+            const colNode = document.createElement('div');
+            colNode.className = 'woodblock-prov-column';
+            colNode.id = `col-${prov.id}`;
 
-        provBlock.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            
-            // 拦截重复点击
-            if (clickedProvinces.has(key)) return;
-            clickedProvinces.add(key);
-
-            // 1. 瞬间将当前省份渲染为醒目的朱砂红
-            provBlock.classList.add('active');
-
-            // 2. 左侧独立双轨生成题跋列
-            const poemColumn = document.createElement('div');
-            poemColumn.className = 'poem-column';
-            poemColumn.style.writingMode = 'vertical-rl';
-            poemColumn.style.fontSize = '1.05rem';
-            poemColumn.style.height = '100%';
-            poemColumn.style.display = 'inline-block';
-            poemColumn.style.verticalAlign = 'top';
-            poemColumn.style.whiteSpace = 'nowrap';
-
-            // 按照点击出的先后顺序显示其一到其五
-            const titlePrefixes = ['其一', '其二', '其三', '其四', '其五'];
-            const currentPrefix = titlePrefixes[currentRevealedCount];
-            
-            poemColumn.innerHTML = `
-                <div class="jixing-node-title font-kangxi">${currentPrefix} · ${item.name}</div>
-                <div style="line-height: 2.3; letter-spacing: 0.15em; margin-top: 10px;">${convertToSpans(item.text)}</div>
+            colNode.innerHTML = `
+                <div class="prov-clickable-header" id="head-${prov.id}">
+                    <div class="prov-large-name font-kangxi">${prov.name}</div>
+                </div>
+                <div class="prov-folded-content">
+                    <span class="inner-poem-row font-kangxi">${convertToSpans(prov.poem)}</span>
+                    <span class="inner-author-row">${prov.author}</span>
+                    <span class="inner-footnote-row font-kangxi">${convertToSpans(prov.note)}</span>
+                </div>
             `;
 
-            // 分轨排布：前3个去上排，后2个去下排，绝对不出界
-            if (currentRevealedCount < 3) {
-                document.getElementById('lf-row-top').appendChild(poemColumn);
-            } else {
-                document.getElementById('lf-row-bottom').appendChild(poemColumn);
-            }
+            canvas.appendChild(colNode);
 
-            currentRevealedCount++;
+            // 绑定折子开合的核心逻辑
+            const header = colNode.querySelector('.prov-clickable-header');
+            header.addEventListener('click', async (e) => {
+                e.stopPropagation();
 
-            // 3. 驱动毛笔字迹渐显
-            await revealText(poemColumn, 45);
+                // 记录足迹探索度
+                readProvincesPool.add(prov.id);
 
-            // 4. 当五个核心省份全部被点亮，画卷谢幕
-            if (clickedProvinces.size === 5) {
-                await wait(5000);
-                
-                // 长卷全清空
-                contentStage.style.opacity = 0;
-                contentStage.style.transition = 'opacity 2.5s ease';
-                await wait(2500);
-                contentStage.innerHTML = '';
+                // 情况一：如果当前点中的本来就是展开的，则执行收拢闭合
+                if (colNode.classList.contains('active')) {
+                    colNode.classList.remove('active');
+                    return;
+                }
 
-                // 唤醒正中央结束语
-                nextPrompt.style.display = 'block';
-                await wait(50);
-                nextPrompt.style.opacity = 1;
-            }
+                // 情况二：【严格互斥流控】先扫场将当前页面所有已展开的兄弟省份全数优雅收拢
+                const allCols = canvas.querySelectorAll('.woodblock-prov-column');
+                allCols.forEach(c => c.classList.remove('active'));
+
+                // 腾出空间后，正式爆展当前省份折子
+                colNode.classList.add('active');
+
+                // 驱动文字墨迹苏醒
+                await wait(200); 
+                revealText(colNode, 35);
+
+                // 智能判定：当看画人广泛品阅（例如点阅了至少6个省份以上）且当前处于最后一页时，含蓄铺垫收束后着落
+                if (readProvincesPool.size >= 6 && currentPageIndex === 2) {
+                    triggerFinal收束Flow();
+                }
+            });
         });
+
+        // 更新翻页按钮的禁激活物理常态
+        if (pageIdx === 0) btnPrev.classList.add('btn-disabled');
+        else btnPrev.classList.remove('btn-disabled');
+
+        if (pageIdx === 2) btnNext.classList.add('btn-disabled');
+        else btnNext.classList.remove('btn-disabled');
+    }
+
+    // 绑定左右次卷翻页动作
+    btnPrev.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentPageIndex > 0) { currentPageIndex--; renderWoodblockPage(currentPageIndex); }
+    });
+    btnNext.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentPageIndex < 2) { currentPageIndex++; renderWoodblockPage(currentPageIndex); }
     });
 
-    // 锁死最后的背景离场点击
-    await nextClick(wrapper);
-    container.classList.remove('active');
-    await wait(2500);
-    container.innerHTML = '';
+    // 渲染开局首卷（直隶编组）
+    renderWoodblockPage(0);
+
+    // 🌟【定稿收束核心控制】
+    let is收束Triggered = false;
+    function triggerFinal收束Flow() {
+        if (is收束Triggered) return;
+        is收束Triggered = true;
+
+        // 手书小楷温柔浮现
+        setTimeout(async () => {
+            finalHandwritten.style.opacity = '0.7'; // 极淡浮现
+            await wait(4500); // 停留数秒
+            finalHandwritten.style.opacity = '0'; // 隐去
+            await wait(2000);
+
+            // 彻底清空整个长卷舞台，给最后一击留白
+            contentStage.style.opacity = 0;
+            await wait(1800);
+            container.innerHTML = '';
+            
+            // 顺畅通关，将执行权移交给第五开
+            container.classList.remove('active');
+        }, 3000);
+    }
 }
