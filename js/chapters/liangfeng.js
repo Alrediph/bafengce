@@ -54,8 +54,8 @@ export default async function playLiangfeng(container) {
             { id: 'hunan',    name: '湖南', poem: '洞庭波涌连天雪，长岛人歌动地诗。', author: '——毛泽东', note: '潇湘夜雨，岳麓书声。' },
             { id: 'sichuan',  name: '四川', poem: '蜀道之难，难于上青天。', author: '——李白《蜀道难》', note: '巴山夜雨，锦城花重。' },
             { id: 'fujian',   name: '福建', poem: '南国多山水，闽中独妙奇。', author: '——杜荀鹤《闽中别所知》', note: '闽山苍苍，海波不惊。' },
-            { id: 'guangdong',name: '广东', poem: '罗浮山下四时春，卢橘杨梅次第新。', author: '——苏轼《食荔枝》', note: '岭南风暖，潮汕月明. ' },
-            { id: 'guangxi',  name: '广西', poem: '江作青罗带，山如碧玉簪。', author: '——韩愈《送桂州严大夫》', note: '桂林山水，八桂烟霞。' },
+            { id: 'guangdong',name: '广东', poem: '罗浮山下四时春，卢橘杨梅次第新。', author: '——苏轼《食荔枝》', note: '岭南风暖，潮汕月明。' },
+            { id: 'guangxi',  name: '广西', poem: '江作青罗带，山如碧玉簪。', author: '——韩愈 nudge《送桂州严大夫》', note: '桂林山水，八桂烟霞。' },
             { id: 'yunnan',   name: '云南', poem: '天气常如二三月，花枝不断四时春。', author: '——杨慎《滇海曲》', note: '苍山洱海，彩云之南。' },
             { id: 'guizhou',  name: '贵州', poem: '天无三日晴，地无三里平。', author: '——民谚', note: '黔山万壑，苗岭侗歌。' }
         ]
@@ -68,8 +68,17 @@ export default async function playLiangfeng(container) {
                 display: flex; justify-content: center; align-items: center;
                 position: relative; background-color: #ffffff;
             }
-            #lf-title-screen { font-size: 3.8rem; letter-spacing: 0.6em; opacity: 0; transition: opacity 2s ease; cursor: pointer; }
-            #lf-intro { font-size: 1.2rem; line-height: 3; opacity: 0; transition: opacity 2s ease; position: absolute; cursor: pointer; }
+            
+            #lf-title-screen { 
+                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                font-size: 3.8rem; letter-spacing: 0.6em; text-indent: 0.6em;
+                opacity: 0; transition: opacity 2s ease; cursor: pointer; white-space: nowrap; text-align: center;
+            }
+            
+            #lf-intro { 
+                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                font-size: 1.2rem; line-height: 3; opacity: 0; transition: opacity 2s ease; cursor: pointer; white-space: nowrap; text-align: center;
+            }
             
             #lf-content-stage {
                 width: 100%; height: 100%; display: none; opacity: 0;
@@ -79,45 +88,31 @@ export default async function playLiangfeng(container) {
 
             /* 刻本总目大框格 */
             .woodblock-catalog-container {
-                width: fit-content; 
-                height: 68vh;
-                border: 4px double #1a1a1a; 
-                padding: 12px 25px; 
-                position: relative;
-                background-color: #faf7f0; 
+                width: fit-content; height: 68vh;
+                border: 4px double #1a1a1a; padding: 12px 25px; 
+                position: relative; background-color: #faf7f0; 
                 box-shadow: inset 0 0 40px rgba(215,200,180,0.25);
-                margin: 0 auto;
-                transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+                margin: 0 auto; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             }
             
             .woodblock-page-canvas {
-                height: 100%;
-                writing-mode: vertical-rl; 
-                display: flex;
-                flex-direction: column; 
-                justify-content: flex-start;
-                align-items: flex-start;
+                height: 100%; writing-mode: vertical-rl; 
+                display: flex; flex-direction: column; 
+                justify-content: flex-start; align-items: flex-start;
             }
 
-            /* 省份栏条目 */
+            /* 省份直栏 */
             .woodblock-prov-column {
-                height: 100%;
-                display: inline-block;
-                vertical-align: top;
-                border-left: 1px solid #e3dac9; 
+                height: 100%; display: inline-block; vertical-align: top;
+                border-left: 1px solid #e3dac9; width: 68px; overflow: hidden;
+                white-space: nowrap; position: relative;
                 transition: width 0.55s cubic-bezier(0.25, 1, 0.5, 1);
-                width: 68px; 
-                overflow: hidden;
-                white-space: nowrap;
-                position: relative;
             }
-            
+
             .prov-clickable-header {
-                height: 100%; width: 68px;
-                display: block; text-align: center;
-                cursor: pointer; padding-top: 45px;
-                box-sizing: border-box; user-select: none;
-                position: absolute; right: 0; top: 0; z-index: 5;
+                height: 100%; width: 68px; display: block; text-align: center;
+                cursor: pointer; padding-top: 45px; box-sizing: border-box; 
+                user-select: none; position: absolute; right: 0; top: 0; z-index: 5;
             }
             .prov-large-name {
                 font-size: 1.7rem; font-weight: bold; color: #1a1a1a;
@@ -126,79 +121,54 @@ export default async function playLiangfeng(container) {
             .prov-clickable-header:hover .prov-large-name { color: #962929; }
 
             .prov-folded-content {
-                height: 100%;
-                margin-right: 68px; 
-                opacity: 0; width: 0;
-                transition: width 0.55s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease;
-                display: block; box-sizing: border-box;
-                padding: 45px 22px 30px 22px;
+                height: 100%; margin-right: 68px; opacity: 0; width: 0;
+                display: block; box-sizing: border-box; padding: 45px 22px 30px 22px;
                 background-color: #f6f0e4; 
+                transition: width 0.55s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease;
             }
 
-            .woodblock-prov-column.active {
-                width: 255px; 
-                background-color: #faf6eb;
-            }
+            .woodblock-prov-column.active { width: 255px; background-color: #faf6eb; }
             .woodblock-prov-column.active .prov-large-name { color: #962929; }
-            .woodblock-prov-column.active .prov-folded-content {
-                width: 187px; opacity: 1; pointer-events: auto;
-            }
+            .woodblock-prov-column.active .prov-folded-content { width: 187px; opacity: 1; pointer-events: auto; }
 
-            /* 行文正文 */
-            .inner-poem-row {
-                font-size: 1.12rem; color: #2c2c2c; line-height: 2.2;
-                letter-spacing: 0.15em; display: block; margin-left: 10px;
-            }
-            .inner-author-row {
-                font-size: 0.85rem; color: #777777; display: block;
-                margin-left: 18px; text-align: left; margin-bottom: 25px;
-            }
-            .inner-footnote-row {
-                font-size: 0.95rem; color: #8c7355; font-weight: bold;
-                line-height: 2; letter-spacing: 0.12em; display: block;
-                border-right: 1px dashed rgba(140,115,85,0.25); padding-right: 6px;
-            }
+            /* 内部文字行气 */
+            .inner-poem-row { font-size: 1.12rem; color: #2c2c2c; line-height: 2.2; letter-spacing: 0.15em; display: block; margin-left: 10px; }
+            .inner-author-row { font-size: 0.85rem; color: #777777; display: block; margin-left: 18px; text-align: left; margin-bottom: 25px; }
+            .inner-footnote-row { font-size: 0.95rem; color: #8c7355; font-weight: bold; line-height: 2; letter-spacing: 0.12em; display: block; border-right: 1px dashed rgba(140,115,85,0.25); padding-right: 6px; }
 
             /* 翻页引线 */
             .woodblock-page-btn {
-                position: absolute; bottom: -55px;
-                font-size: 1.05rem; letter-spacing: 0.2em; color: #777777;
+                position: absolute; bottom: -50px;
+                writing-mode: horizontal-tb !important; 
+                white-space: nowrap !important;        
+                font-size: 1.05rem; letter-spacing: 0.15em; color: #777777;
                 cursor: pointer; user-select: none; transition: color 0.3s ease;
+                display: block;
             }
             .woodblock-page-btn:hover { color: #962929; font-weight: bold; }
-            #btn-prev-page { right: 85px; }
-            #btn-next-page { right: 0px; }
+            
+            #btn-prev-page { left: 0px; }
+            #btn-next-page { left: 105px; }
             .btn-disabled { opacity: 0.15 !important; pointer-events: none !important; }
 
-            /* 🌟【核心重构：正中央独立大字终章页】完美继承开篇浮显气韵，大方正中 */
+            /* 正中央独立大字终章页 */
             #lf-outro-screen {
-                position: absolute;
-                top: 50%; left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 2.4rem; /* 大字宏伟有力 */
-                letter-spacing: 0.5em;
-                color: #2a2a2a;
-                opacity: 0;
-                transition: opacity 2s ease;
-                white-space: nowrap;
-                text-align: center;
-                display: none;
-                pointer-events: none;
+                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                font-size: 2.4rem; letter-spacing: 0.5em; color: #2a2a2a;
+                opacity: 0; transition: opacity 2s ease; white-space: nowrap; text-align: center;
+                display: none; pointer-events: none;
             }
         </style>
 
         <div class="liangfeng-wrapper" id="lf-wrapper">
-            <!-- 第一幕：大字居中 -->
             <div id="lf-title-screen" class="vertical-text font-kangxi">凉风</div>
 
-            <!-- 第二幕：启幕词（🌟已同步完美校准为定稿修订版） -->
             <div id="lf-intro" class="vertical-text font-kangxi" style="display: none;">
                 凉风，西南风也。凉，寒也。阴气始行，微敛也。<br>
                 属坤，八音为土。<br>
                 立秋之风。
             </div>
 
-            <!-- 第三幕：双页大格刻本交互主场景 -->
             <div id="lf-content-stage">
                 <div class="woodblock-catalog-container">
                     <div class="woodblock-page-canvas" id="woodblock-canvas"></div>
@@ -208,7 +178,6 @@ export default async function playLiangfeng(container) {
                 </div>
             </div>
 
-            <!-- 🌟 第四幕：全新开辟的独立正中央通关大字页 -->
             <div id="lf-outro-screen" class="font-kangxi">君子之行，大地記之。</div>
         </div>
     `;
@@ -233,7 +202,7 @@ export default async function playLiangfeng(container) {
     await wait(2000);
     titleScreen.style.display = 'none';
 
-    // ====== 第二幕：新版启幕词 ======
+    // ====== 第二幕：启幕词 ======
     intro.style.display = 'block';
     await wait(50);
     intro.style.opacity = 1;
@@ -242,13 +211,12 @@ export default async function playLiangfeng(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：双页刻本大目次 ======
+    // ====== 第三幕：目次主交互 ======
     contentStage.style.display = 'flex'; 
     await wait(50);
     contentStage.style.opacity = 1;
 
     let currentPageIndex = 0;
-    const readProvincesPool = new Set();
 
     function renderWoodblockPage(pageIdx) {
         canvas.innerHTML = ''; 
@@ -275,7 +243,6 @@ export default async function playLiangfeng(container) {
             const header = colNode.querySelector('.prov-clickable-header');
             header.addEventListener('click', async (e) => {
                 e.stopPropagation();
-                readProvincesPool.add(prov.id);
 
                 if (colNode.classList.contains('active')) {
                     colNode.classList.remove('active');
@@ -285,60 +252,68 @@ export default async function playLiangfeng(container) {
                 const allCols = canvas.querySelectorAll('.woodblock-prov-column');
                 allCols.forEach(c => c.classList.remove('active'));
 
-                colNode.classList.add('active');
+                colNode.className = 'woodblock-prov-column active';
                 await wait(150); 
                 revealText(colNode, 35);
-
-                // 在次卷且累计点阅了 6 个及以上的省份，开始稳步触发高雅离场
-                if (readProvincesPool.size >= 6 && currentPageIndex === 1) {
-                    triggerFinal离场Flow();
-                }
+                // 🌟【彻底删除自动化跳转】这里只管展示，不抢跑任何时序！
             });
         });
 
-        if (pageIdx === 0) btnPrev.classList.add('btn-disabled');
-        else btnPrev.classList.remove('btn-disabled');
-
-        if (pageIdx === 1) btnNext.classList.add('btn-disabled');
-        else btnNext.classList.remove('btn-disabled');
+        // 🌟【智能按钮变形机制】
+        if (pageIdx === 0) {
+            btnPrev.className = 'woodblock-page-btn font-kangxi btn-disabled';
+            btnNext.className = 'woodblock-page-btn font-kangxi';
+            btnNext.innerText = '【 次卷 】'; // 第一页时，按钮叫次卷
+        } else if (pageIdx === 1) {
+            btnPrev.className = 'woodblock-page-btn font-kangxi';
+            btnNext.className = 'woodblock-page-btn font-kangxi';
+            btnNext.innerText = '【 掩卷 】'; // 🌟 第二页时，右按钮自动变成离场钥匙！
+        }
     }
 
+    // 绑定前卷点击
     btnPrev.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (currentPageIndex > 0) { currentPageIndex--; renderWoodblockPage(currentPageIndex); }
+        if (currentPageIndex > 0) { 
+            currentPageIndex--; 
+            renderWoodblockPage(currentPageIndex); 
+        }
     });
-    btnNext.addEventListener('click', (e) => {
+
+    // 🌟 统一接管次卷与离场的右侧按钮
+    btnNext.addEventListener('click', async (e) => {
         e.stopPropagation();
-        if (currentPageIndex < 1) { currentPageIndex++; renderWoodblockPage(currentPageIndex); }
+        if (currentPageIndex === 0) {
+            // 在第一页点击，带你顺利去到第二页
+            currentPageIndex = 1;
+            renderWoodblockPage(currentPageIndex);
+        } else if (currentPageIndex === 1) {
+            // 🌟 在第二页点击【 掩卷 】，才会真正触发终章！全权由你说了算
+            await runStandaloneOutroPage();
+        }
     });
 
     renderWoodblockPage(0);
 
-    // ====== 第四幕：全新重构的终章时序控制流 ======
-    let is收束Triggered = false;
-    function triggerFinal离场Flow() {
-        if (is收束Triggered) return;
-        is收束Triggered = true;
+    // ====== 第四幕：全手动触发的独立大字页控制流 ======
+    async function runStandaloneOutroPage() {
+        // 1. 目次大框优雅退场
+        contentStage.style.opacity = 0;
+        await wait(1800);
+        contentStage.style.display = 'none';
 
-        setTimeout(async () => {
-            // 1. 线装书总目大框整体平缓隐退、消散
-            contentStage.style.opacity = 0;
-            await wait(1800);
-            contentStage.style.display = 'none';
-
-            // 2. 🌟 整个画布重归于纯净的素白，大方、沉稳地唤醒独立页大字
-            outroScreen.style.display = 'block';
-            await wait(50);
-            outroScreen.style.opacity = '1'; 
-            
-            // 3. 稳稳停留在白宣正中央 5 秒供人静读，随后潇洒淡化
-            await wait(5000); 
-            outroScreen.style.opacity = '0'; 
-            await wait(2200);
-
-            // 4. 彻底清场卸载，交付第五开
-            container.innerHTML = '';
-            container.classList.remove('active');
-        }, 3500); // 留足 3.5 秒供人读完最后一个展开的省份
+        // 2. 正中央升起独立大字
+        outroScreen.style.display = 'block';
+        await wait(50);
+        outroScreen.style.opacity = '1'; 
+        
+        // 3. 🌟 绝对静止驻留，不再自动跳走！等待你心满意足后，点击大背景才执行离场
+        await nextClick(wrapper);
+        
+        // 4. 离场全卸载
+        outroScreen.style.opacity = '0'; 
+        await wait(1800);
+        container.innerHTML = '';
+        container.classList.remove('active');
     }
 }
