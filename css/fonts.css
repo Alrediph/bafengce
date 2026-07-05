@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'KangXi';
+    src: url('../assets/fonts/KangXi.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.font-kangxi {
+    font-family: 'KangXi', "Kaiti SC", "STKaiti", serif;
+}
