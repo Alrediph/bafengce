@@ -5,7 +5,7 @@ const nextClick = (element) => new Promise(resolve => {
     element.addEventListener('click', resolve, { once: true });
 });
 
-// 辅助函数：墨迹渐显
+// 辅助函数：麦迹渐显
 function convertToSpans(htmlString) {
     let result = '';
     let inTag = false;
@@ -35,12 +35,12 @@ function revealText(element, speed = 35) {
 }
 
 export default async function playLiangfeng(container) {
-    // 两页满载 18 个省份数据大盘
+    // 二卷本，每卷九省
     const pagesData = [
         [
             { id: 'zhili',    name: '直隶', poem: '燕山雪花大如席，片片吹落轩辕台。', author: '——李白《北风行》', note: '京华烟云，长城内外。' },
             { id: 'shandong', name: '山东', poem: '会当凌绝顶，一览众山小。', author: '——杜甫《望岳》', note: '泰山岩岩，鲁邦所瞻。' },
-            { id: 'henan',    name: '河南', poem: '谁家玉笛暗飞声，散入春风满洛城。', author: '——李白《春夜洛城闻笛》', note: '中原故土，河洛风烟。' },
+            { id: 'henan',    name: '河南', poem: '黄河远上白云间，一片孤城万仞山。', author: '——王之涣《凉州词》', note: '中原故土，河洛风烟。' },
             { id: 'shanxi1',  name: '山西', poem: '白日依山尽，黄河入海流。', author: '——王之涣《登鹳雀楼》', note: '表里山河，晋商古道。' },
             { id: 'shaanxi',  name: '陕西', poem: '长安一片月，万户捣衣声。', author: '——李白《子夜吴歌》', note: '秦川历历，汉阙犹存。' },
             { id: 'gansu',    name: '甘肃', poem: '羌笛何须怨杨柳，春风不度玉门关。', author: '——王之涣《凉州词》', note: '河西走廊，丝路驼铃。' },
@@ -53,9 +53,9 @@ export default async function playLiangfeng(container) {
             { id: 'hubei',    name: '湖北', poem: '黄鹤一去不复返，白云千载空悠悠。', author: '——崔颢《黄鹤楼》', note: '荆楚大地，云梦遗泽。' },
             { id: 'hunan',    name: '湖南', poem: '洞庭波涌连天雪，长岛人歌动地诗。', author: '——毛泽东', note: '潇湘夜雨，岳麓书声。' },
             { id: 'sichuan',  name: '四川', poem: '蜀道之难，难于上青天。', author: '——李白《蜀道难》', note: '巴山夜雨，锦城花重。' },
-            { id: 'fujian',   name: '福建', poem: '南国多山水，闽中独妙奇。', author: '——杜荀鹤《闽中别所知》', note: '闽山苍苍，海波不惊。' },
+            { id: 'fujian',   name: '福建', poem: '海日生残夜，江春入旧年。', author: '——王湾《次北固山下》', note: '闽山苍苍，海波不惊。' },
             { id: 'guangdong',name: '广东', poem: '罗浮山下四时春，卢橘杨梅次第新。', author: '——苏轼《食荔枝》', note: '岭南风暖，潮汕月明。' },
-            { id: 'guangxi',  name: '广西', poem: '江作青罗带，山如碧玉簪。', author: '——韩愈 nudge《送桂州严大夫》', note: '桂林山水，八桂烟霞。' },
+            { id: 'guangxi',  name: '广西', poem: '江作青罗带，山如碧玉簪。', author: '——韩愈《送桂州严大夫》', note: '桂林山水，八桂烟霞。' },
             { id: 'yunnan',   name: '云南', poem: '天气常如二三月，花枝不断四时春。', author: '——杨慎《滇海曲》', note: '苍山洱海，彩云之南。' },
             { id: 'guizhou',  name: '贵州', poem: '天无三日晴，地无三里平。', author: '——民谚', note: '黔山万壑，苗岭侗歌。' }
         ]
@@ -77,7 +77,9 @@ export default async function playLiangfeng(container) {
             
             #lf-intro { 
                 position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                font-size: 1.2rem; line-height: 3; opacity: 0; transition: opacity 2s ease; cursor: pointer; white-space: nowrap; text-align: center;
+                font-size: 1.2rem; line-height: 2.8; letter-spacing: 0.15em; 
+                opacity: 0; transition: opacity 2s ease; cursor: pointer;
+                writing-mode: vertical-rl; white-space: nowrap;
             }
             
             #lf-content-stage {
@@ -136,20 +138,41 @@ export default async function playLiangfeng(container) {
             .inner-author-row { font-size: 0.85rem; color: #777777; display: block; margin-left: 18px; text-align: left; margin-bottom: 25px; }
             .inner-footnote-row { font-size: 0.95rem; color: #8c7355; font-weight: bold; line-height: 2; letter-spacing: 0.12em; display: block; border-right: 1px dashed rgba(140,115,85,0.25); padding-right: 6px; }
 
-            /* 翻页引线 */
+            /* 🌟【大改写：水平脚栏容器】通过 flex-direction: row 彻底锁死绝对水平坐标轴 */
+            .woodblock-footer-bar {
+                position: absolute;
+                bottom: -50px;
+                left: 0;
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                gap: 16px;
+                writing-mode: horizontal-tb !important;
+                direction: ltr !important;
+            }
+
+            /* 🌟【大改写：原子化横排按钮】强制内部文字单元通过弹性行模型从左往右咬死铺开，绝不换行断裂 */
             .woodblock-page-btn {
-                position: absolute; bottom: -50px;
-                writing-mode: horizontal-tb !important; 
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: center !important;
+                writing-mode: horizontal-tb !important;
                 white-space: nowrap !important;        
-                font-size: 1.05rem; letter-spacing: 0.15em; color: #777777;
+                font-size: 1.05rem; 
+                color: #777777;
                 cursor: pointer; user-select: none; transition: color 0.3s ease;
-                display: block;
             }
             .woodblock-page-btn:hover { color: #962929; font-weight: bold; }
-            
-            #btn-prev-page { left: 0px; }
-            #btn-next-page { left: 105px; }
             .btn-disabled { opacity: 0.15 !important; pointer-events: none !important; }
+
+            /* 🌟 内部切片单元：彻底断开垂直书写的遗传因袭 */
+            .woodblock-page-btn span {
+                display: inline-block !important;
+                writing-mode: horizontal-tb !important;
+                white-space: nowrap !important;
+            }
 
             /* 正中央独立大字终章页 */
             #lf-outro-screen {
@@ -173,8 +196,15 @@ export default async function playLiangfeng(container) {
                 <div class="woodblock-catalog-container">
                     <div class="woodblock-page-canvas" id="woodblock-canvas"></div>
                     
-                    <div class="woodblock-page-btn font-kangxi" id="btn-prev-page">【 前卷 】</div>
-                    <div class="woodblock-page-btn font-kangxi" id="btn-next-page">【 次卷 】</div>
+                    <!-- 🌟 升级为原子横排架构的控制尾栏 -->
+                    <div class="woodblock-footer-bar" id="woodblock-foot">
+                        <div class="woodblock-page-btn font-kangxi" id="btn-prev-page">
+                            <span>【</span><span>前</span><span>卷</span><span>】</span>
+                        </div>
+                        <div class="woodblock-page-btn font-kangxi" id="btn-next-page">
+                            <span>【</span><span>次</span><span>卷</span><span>】</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -211,7 +241,7 @@ export default async function playLiangfeng(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：目次主交互 ======
+    // ====== 第三幕：双页大刻本总目 ======
     contentStage.style.display = 'flex'; 
     await wait(50);
     contentStage.style.opacity = 1;
@@ -255,23 +285,21 @@ export default async function playLiangfeng(container) {
                 colNode.className = 'woodblock-prov-column active';
                 await wait(150); 
                 revealText(colNode, 35);
-                // 🌟【彻底删除自动化跳转】这里只管展示，不抢跑任何时序！
             });
         });
 
-        // 🌟【智能按钮变形机制】
+        // 🌟 原子级别动态变换内部原子标签内容，绝不溢出串行
         if (pageIdx === 0) {
             btnPrev.className = 'woodblock-page-btn font-kangxi btn-disabled';
             btnNext.className = 'woodblock-page-btn font-kangxi';
-            btnNext.innerText = '【 次卷 】'; // 第一页时，按钮叫次卷
+            btnNext.innerHTML = '<span>【</span><span>次</span><span>卷</span><span>】</span>';
         } else if (pageIdx === 1) {
             btnPrev.className = 'woodblock-page-btn font-kangxi';
             btnNext.className = 'woodblock-page-btn font-kangxi';
-            btnNext.innerText = '【 掩卷 】'; // 🌟 第二页时，右按钮自动变成离场钥匙！
+            btnNext.innerHTML = '<span>【</span><span>掩</span><span>卷</span><span>】</span>';
         }
     }
 
-    // 绑定前卷点击
     btnPrev.addEventListener('click', (e) => {
         e.stopPropagation();
         if (currentPageIndex > 0) { 
@@ -280,15 +308,12 @@ export default async function playLiangfeng(container) {
         }
     });
 
-    // 🌟 统一接管次卷与离场的右侧按钮
     btnNext.addEventListener('click', async (e) => {
         e.stopPropagation();
         if (currentPageIndex === 0) {
-            // 在第一页点击，带你顺利去到第二页
             currentPageIndex = 1;
             renderWoodblockPage(currentPageIndex);
         } else if (currentPageIndex === 1) {
-            // 🌟 在第二页点击【 掩卷 】，才会真正触发终章！全权由你说了算
             await runStandaloneOutroPage();
         }
     });
@@ -297,20 +322,16 @@ export default async function playLiangfeng(container) {
 
     // ====== 第四幕：全手动触发的独立大字页控制流 ======
     async function runStandaloneOutroPage() {
-        // 1. 目次大框优雅退场
         contentStage.style.opacity = 0;
         await wait(1800);
         contentStage.style.display = 'none';
 
-        // 2. 正中央升起独立大字
         outroScreen.style.display = 'block';
         await wait(50);
         outroScreen.style.opacity = '1'; 
         
-        // 3. 🌟 绝对静止驻留，不再自动跳走！等待你心满意足后，点击大背景才执行离场
         await nextClick(wrapper);
         
-        // 4. 离场全卸载
         outroScreen.style.opacity = '0'; 
         await wait(1800);
         container.innerHTML = '';
