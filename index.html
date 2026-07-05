@@ -8,10 +8,27 @@
     <link rel="stylesheet" href="css/fonts.css">
 </head>
 <body>
+
     <div id="app">
         <div id="prologue" class="scene"></div>
+        
         <div id="chapter-1" class="scene"></div>
+        <div id="chapter-2" class="scene"></div>
+        <div id="chapter-3" class="scene"></div>
+        <div id="chapter-4" class="scene"></div>
+        <div id="chapter-5" class="scene"></div>
+        <div id="chapter-6" class="scene"></div>
+        <div id="chapter-7" class="scene"></div>
+        <div id="chapter-8" class="scene"></div>
     </div>
+
+    <script>
+        window.onerror = function(message, source, lineno) {
+            alert("发现阻碍！\n信息: " + message + "\n文件: " + source + "\n行号: " + lineno);
+            return true;
+        };
+    </script>
+
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
