@@ -5,15 +5,17 @@ const nextClick = (element) => new Promise(resolve => {
     element.addEventListener('click', resolve, { once: true });
 });
 
+// 纯代码高级数字音频合成器：无资产依赖，仿真还原传统“磬音”的空灵深远
 function playChimeGong() {
     try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
         const ctx = new AudioContext();
+        
         const osc1 = ctx.createOscillator();
         const gain1 = ctx.createGain();
         osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(293.66, ctx.currentTime); 
+        osc1.frequency.setValueAtTime(293.66, ctx.currentTime); // D4 调
         
         const osc2 = ctx.createOscillator();
         const gain2 = ctx.createGain();
@@ -22,6 +24,7 @@ function playChimeGong() {
         
         gain1.gain.setValueAtTime(0.3, ctx.currentTime);
         gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 4.5);
+        
         gain2.gain.setValueAtTime(0.08, ctx.currentTime);
         gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 3.0);
         
@@ -40,12 +43,11 @@ function playChimeGong() {
 }
 
 export default async function playChanghe(container) {
-    // 🛡️【终极安全防线】如果全局路由抢跑，第五开死锁在此进入静默等待，不注入任何DOM
     if (window.currentActiveChapter === undefined) {
         window.currentActiveChapter = 5; 
     }
     while (window.currentActiveChapter < 5) {
-        await wait(200); // 每200毫秒自检一次，彻底卡死抢跑流
+        await wait(200); 
     }
 
     container.innerHTML = `
@@ -96,9 +98,16 @@ export default async function playChanghe(container) {
                 overflow: hidden; display: flex; justify-content: center; align-items: center;
                 z-index: 2;
             }
+            
+            /* 🌟【核心修复一】将门扉的全局及内部层级锁死在底层 z-index: 2，绝对不准骑在祈福牌头上 */
+            .ch-gate-overlay {
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                z-index: 2; display: flex; pointer-events: none;
+            }
             .gate-leaf {
                 position: absolute; top: 0; width: 50%; height: 100%;
-                background-color: rgba(17, 22, 30, 0.95); box-sizing: border-box; z-index: 5;
+                background-color: rgba(17, 22, 30, 0.95); box-sizing: border-box; 
+                z-index: 2; /* 降为底层层级 */
                 transition: transform 2.5s cubic-bezier(0.66, 0, 0.2, 1);
             }
             .gate-leaf-left { left: 0; border-right: 1px solid rgba(255,255,255,0.03); }
@@ -112,13 +121,16 @@ export default async function playChanghe(container) {
                 background: linear-gradient(to bottom, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 60%, rgba(255,255,255,0) 100%);
                 pointer-events: none; z-index: 3;
             }
+            
+            /* 🌟【核心修复二】将祈福牌与毛笔强行提调到顶层 z-index: 6，确保手感和交互畅通无阻 */
             .prayer-plaque-container {
                 position: absolute; top: 46%; left: 50%; transform: translate(-50%, -40%);
                 width: 110px; height: 260px;
                 background: linear-gradient(135deg, #dfcfa5 0%, #ccba8f 100%); 
                 border-radius: 2px;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 0 15px rgba(0,0,0,0.05);
-                z-index: 4; cursor: pointer;
+                z-index: 6; cursor: pointer; /* 确保在最上层 */
+                pointer-events: auto !important;
                 transition: transform 3.8s cubic-bezier(0.55, 0, 0.1, 1), opacity 3s ease, box-shadow 1.5s ease;
                 display: flex; justify-content: center; align-items: center;
                 box-sizing: border-box; padding: 25px 12px;
@@ -129,16 +141,19 @@ export default async function playChanghe(container) {
             }
             .plaque-wish-text {
                 writing-mode: vertical-rl; height: 100%; width: 100%;
-                font-family: 'Kaiti', 'STKaiti', serif;
                 font-size: 1.2rem; font-weight: bold; color: #232323;
                 letter-spacing: 0.18em; line-height: 1.6;
                 text-align: start; display: block; word-break: break-all;
+                font-family: inherit !important; 
             }
+            
             .calligraphy-brush {
                 position: absolute; top: 52%; left: 56%;
                 width: 8px; height: 180px;
                 background: linear-gradient(to bottom, #2b2b2b 0%, #151515 85%, #e2dac9 100%);
-                border-radius: 1px; z-index: 4; cursor: pointer;
+                border-radius: 1px; 
+                z-index: 6; cursor: pointer; /* 确保在最上层 */
+                pointer-events: auto !important;
                 transition: opacity 1s ease, transform 1s ease; transform-origin: top center;
             }
             .calligraphy-brush::after {
@@ -146,13 +161,16 @@ export default async function playChanghe(container) {
                 width: 12px; height: 20px; background-color: #ffffff;
                 clip-path: polygon(50% 100%, 0 0, 100% 0);
             }
+            
             .prayer-plaque-container.ascend {
                 box-shadow: 0 0 50px rgba(255,254,220,0.85);
                 transform: translate(-50%, -190vh) scale(0.12); opacity: 0.05;
             }
+            
+            /* 案板 */
             .ink-writing-overlay {
                 position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%);
-                z-index: 8; width: 320px; display: none; opacity: 0;
+                z-index: 12; width: 320px; display: none; opacity: 0;
                 transition: opacity 0.5s ease; background: rgba(20, 26, 35, 0.9);
                 padding: 15px; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
                 border: 1px solid rgba(255,255,255,0.06); text-align: center; writing-mode: horizontal-tb !important;
@@ -161,13 +179,15 @@ export default async function playChanghe(container) {
                 width: 100%; background: rgba(0,0,0,0.3); border: 1px solid #4a5568;
                 color: #ffffff; padding: 8px 10px; font-size: 0.95rem; border-radius: 2px;
                 box-sizing: border-box; text-align: center; letter-spacing: 0.1em;
-                margin-bottom: 12px; font-family: 'Kaiti', serif;
+                margin-bottom: 12px; font-family: inherit !important;
             }
             .ink-submit-btn {
                 background-color: #962929; color: #ffffff; padding: 6px 20px;
                 font-size: 0.85rem; letter-spacing: 0.2em; border-radius: 2px;
-                cursor: pointer; border: none; font-family: 'KangXi', serif;
+                cursor: pointer; border: none; font-family: inherit !important;
             }
+            
+            /* 🌟【提示校准】 */
             #gate-push-tip {
                 position: absolute; bottom: 6%; left: 50%; transform: translateX(-50%);
                 font-size: 1.05rem; letter-spacing: 0.25em; color: #7f8c8d;
@@ -218,7 +238,7 @@ export default async function playChanghe(container) {
                 </g>
             </svg>
 
-            <div id="lf-title-screen" style="display:none;"></div> <!-- 占位防御 -->
+            <div id="lf-title-screen" style="display:none;"></div> 
             <div id="ch-title-screen" class="vertical-text font-kangxi">阊阖风</div>
             <div id="ch-intro" class="vertical-text font-kangxi" style="display: none;">
                 阊阖风，西方风也。阊阖者，天门也。咸收藏也。<br>
@@ -227,21 +247,21 @@ export default async function playChanghe(container) {
             </div>
 
             <div id="ch-content-stage">
-                <div class="woodblock-catalog-container gate-universe-box">
+                <div class="woodblock-catalog-container gate-universe-box font-kangxi">
                     <div class="ch-gate-overlay" id="ch-gate-box">
                         <div class="gate-leaf gate-leaf-left"></div>
                         <div class="gate-leaf gate-leaf-right"></div>
                     </div>
                     <div class="heaven-ray"></div>
-                    <div class="prayer-plaque-container" id="ch-plaque">
-                        <div class="plaque-wish-text" id="wish-text-slot"></div>
+                    <div class="prayer-plaque-container font-kangxi" id="ch-plaque">
+                        <div class="plaque-wish-text font-kangxi" id="wish-text-slot"></div>
                     </div>
                     <div class="calligraphy-brush" id="ch-brush"></div>
                 </div>
-                <div id="gate-push-tip" class="font-kangxi">【 抚扉启关，天门大开 】</div>
-                <div class="ink-writing-overlay" id="ch-writing-panel">
-                    <input type="text" class="ink-input-field" id="wish-input" placeholder="秉笔落墨，写下祈愿" maxlength="24" autocomplete="off" />
-                    <button class="ink-submit-btn" id="btn-submit-wish">送入門</button>
+                <div id="gate-push-tip" class="font-kangxi">【 點擊祈福牌或毛筆，落墨祈願 】</div>
+                <div class="ink-writing-overlay font-kangxi" id="ch-writing-panel">
+                    <input type="text" class="ink-input-field font-kangxi" id="wish-input" placeholder="秉笔落墨，写下祈愿" maxlength="24" autocomplete="off" />
+                    <button class="ink-submit-btn font-kangxi" id="btn-submit-wish">送入門</button>
                 </div>
             </div>
         </div>
@@ -264,14 +284,12 @@ export default async function playChanghe(container) {
     container.classList.add('active');
     await wait(400);
 
-    // ====== 第一幕 ======
     titleScreen.style.opacity = 1;
     await nextClick(wrapper);
     titleScreen.style.opacity = 0;
     await wait(2000);
     titleScreen.style.display = 'none';
 
-    // ====== 第二幕 ======
     intro.style.display = 'block';
     await wait(50);
     intro.style.opacity = 1;
@@ -280,7 +298,6 @@ export default async function playChanghe(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕 ======
     contentStage.style.display = 'block';
     await wait(50);
     contentStage.style.opacity = 1;
