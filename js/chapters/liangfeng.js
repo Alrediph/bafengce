@@ -35,6 +35,9 @@ function revealText(element, speed = 35) {
 }
 
 export default async function playLiangfeng(container) {
+    // 🌟 注册当前活跃生命周期
+    window.currentActiveChapter = 4;
+
     // 二卷本内地十八省
     const pagesData = [
         [
@@ -46,7 +49,7 @@ export default async function playLiangfeng(container) {
             { id: 'gansu',    name: '甘肃', poem: '羌笛何须怨杨柳，春风不度玉门关。', author: '——王之涣《凉州词》', note: '河西走廊，丝路驼铃。' },
             { id: 'jiangsu',  name: '江苏', poem: '姑苏城外寒山寺，夜半钟声到客船。', author: '——张继《枫桥夜泊》', note: '金陵旧梦，吴门烟水。' },
             { id: 'anhui',    name: '安徽', poem: '五岳归来不看山，黄山归来不看岳。', author: '——徐霞客', note: '徽岭白岳，水墨人家。' },
-            { id: 'zhejiang', name: '浙江', poem: '三秋桂子，十里荷花。', author: '——柳永《望海潮》', note: '西湖烟雨，之江潮生. ' }
+            { id: 'zhejiang', name: '浙江', poem: '三秋桂子，十里荷花。', author: '——柳永《望海潮》', note: '西湖烟雨，之江潮生。' }
         ],
         [
             { id: 'jiangxi',  name: '江西', poem: '落霞与孤鹜齐飞，秋水共长天一色。', author: '——王勃《滕王阁序》', note: '赣江悠悠，匡庐云雾。' },
@@ -55,7 +58,7 @@ export default async function playLiangfeng(container) {
             { id: 'sichuan',  name: '四川', poem: '蜀道之难，难于上青天。', author: '——李白《蜀道难》', note: '巴山夜雨，锦城花重。' },
             { id: 'fujian',   name: '福建', poem: '南国多山水，闽中独妙奇。', author: '——杜荀鹤《闽中别所知》', note: '闽山苍苍，海波不惊。' },
             { id: 'guangdong',name: '广东', poem: '罗浮山下四时春，卢橘杨梅次第新。', author: '——苏轼《食荔枝》', note: '岭南风暖，潮汕月明。' },
-            { id: 'guangxi',  name: '广西', poem: '江作青罗带，山如碧玉簪。', author: '——韩愈《送桂州严大夫》', note: '桂林山水，八桂烟霞。' },
+            { id: 'guangxi',  name: '广西', poem: '江作青罗带，山如碧玉簪。', author: '——韩愈《送桂州严大夫》', note: '桂林山水，八桂烟霞. ' },
             { id: 'yunnan',   name: '云南', poem: '天气常如二三月，花枝不断四时春。', author: '——杨慎《滇海曲》', note: '苍山洱海，彩云之南。' },
             { id: 'guizhou',  name: '贵州', poem: '天无三日晴，地无三里平。', author: '——民谚', note: '黔山万壑，苗岭侗歌。' }
         ]
@@ -193,7 +196,7 @@ export default async function playLiangfeng(container) {
     await wait(2000);
     titleScreen.style.display = 'none';
 
-    // ====== 第二幕：启幕词 ======
+    // ====== 第二幕 ======
     intro.style.display = 'block';
     await wait(50);
     intro.style.opacity = 1;
@@ -202,7 +205,7 @@ export default async function playLiangfeng(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：双页大刻本总目 ======
+    // ====== 第三幕 ======
     contentStage.style.display = 'flex'; 
     await wait(50);
     contentStage.style.opacity = 1;
@@ -260,9 +263,8 @@ export default async function playLiangfeng(container) {
         }
     }
 
-    // 🌟【核心重构锁】用一个全新的独立 Promise 拦截住 main.js 的执行流
+    // 独立流锁
     const chapterMasterLock = new Promise((resolveMasterFlow) => {
-        
         btnPrev.addEventListener('click', (e) => {
             e.stopPropagation();
             if (currentPageIndex > 0) { 
@@ -277,16 +279,16 @@ export default async function playLiangfeng(container) {
                 currentPageIndex = 1;
                 renderWoodblockPage(currentPageIndex);
             } else if (currentPageIndex === 1) {
-                // 当你在第二页亲手按下【 掩卷 】，才跑终章大字
                 await runStandaloneOutroPage();
-                resolveMasterFlow(); // 🌟 只有在这里被执行，第五开才被允许初始化！
+                // 🌟 正式移交放行条，激活第五开
+                window.currentActiveChapter = 5;
+                resolveMasterFlow();
             }
         });
     });
 
     renderWoodblockPage(0);
 
-    // 阻塞函数体内核
     async function runStandaloneOutroPage() {
         contentStage.style.opacity = 0;
         await wait(1800);
@@ -304,6 +306,5 @@ export default async function playLiangfeng(container) {
         container.classList.remove('active');
     }
 
-    // 🌟 阻塞等待，直到上面的终章生命周期彻底完结，才允许退出主函数
     await chapterMasterLock;
 }
