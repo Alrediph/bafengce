@@ -58,25 +58,25 @@ export default async function playQingming(container) {
                 transition: opacity 1.5s ease; position: relative;
             }
             
-            /* 【核心修复：双层固定物理轨道】彻底废除不稳定的嵌套Flex，使用绝对高度错开上下排 */
+            /* 双层固定物理轨道：彻底废除弹性盒，使用绝对高度错开上下排 */
             .tiba-row-top {
                 position: absolute;
-                right: 52vw; /* 从中线偏左开始往左平铺 */
+                right: 52vw; 
                 top: 10vh;
                 height: 36vh;
                 display: flex;
-                flex-direction: column; /* 在竖排文字下，column代表真正的横向并排 */
+                flex-direction: column; 
                 justify-content: flex-start;
                 align-items: flex-start;
                 writing-mode: vertical-rl;
-                gap: 55px; /* 每首诗之间不可撼动的黄金留白 */
+                gap: 55px; 
                 transition: opacity 2s ease;
             }
             
             .tiba-row-bottom {
                 position: absolute;
-                right: 52vw; /* 与第一排对齐线完全咬死，绝错位 */
-                top: 52vh; /* 精准定位在下半部分，坚决防止出界 */
+                right: 52vw; 
+                top: 52vh; 
                 height: 36vh;
                 display: flex;
                 flex-direction: column;
@@ -102,7 +102,7 @@ export default async function playQingming(container) {
                 font-size: 1.15rem; 
             }
 
-            /* 右侧白描写意艺术区：初始隐藏 */
+            /* 右侧白描写意艺术区 */
             .ink-art-zone {
                 position: absolute; right: 5%; bottom: 5%; width: 45vw; height: 80vh;
                 pointer-events: none;
@@ -129,7 +129,7 @@ export default async function playQingming(container) {
             }
             .sway-leaf { transform-origin: 90% 90%; animation: leaf-breathe 8s ease-in-out infinite; }
 
-            /* 意境触发点：初始完全隐藏且不可点击 */
+            /* 意境触发点 */
             .trigger-dot {
                 position: absolute; width: 40px; height: 40px;
                 background: radial-gradient(circle, rgba(160,175,165,0.18) 0%, rgba(255,255,255,0) 70%);
@@ -145,7 +145,7 @@ export default async function playQingming(container) {
             .trigger-dot:hover { transform: scale(1.4); background: radial-gradient(circle, rgba(160,175,165,0.35) 0%, rgba(255,255,255,0) 70%); }
             .trigger-dot.clicked { pointer-events: none; opacity: 0 !important; }
 
-            /* 【高饱和度真水波特效】显著加深浓黑对比度，模拟浓墨击中纸面荡开涟漪 */
+            /* 高饱和度真水波特效 */
             #ink-splash {
                 position: absolute; width: 50px; height: 50px;
                 top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
@@ -160,12 +160,12 @@ export default async function playQingming(container) {
             }
             .ink-blooming { animation: water-ripple-effect 2.5s cubic-bezier(0.1, 0.6, 0.2, 1) forwards; }
             
-            /* 【核心修复：结尾词居中放大】 */
+            /* 结尾词居中放大 */
             #qm-next-prompt {
                 position: absolute; 
                 top: 50%; left: 50%; 
-                transform: translate(-50%, -50%); /* 完美的正中央绝对死锁 */
-                font-size: 1.8rem; /* 字体显著放大，极具视觉张力 */
+                transform: translate(-50%, -50%); 
+                font-size: 1.8rem; 
                 letter-spacing: 0.5em; 
                 color: #4a4a4a;
                 opacity: 0; 
@@ -178,14 +178,17 @@ export default async function playQingming(container) {
         </style>
 
         <div class="qingming-wrapper" id="qm-wrapper">
+            <!-- 幕一：居中大字 -->
             <div id="qm-title-screen" class="vertical-text font-kangxi">清明</div>
 
+            <!-- 幕二：启幕词（🌟此处已修复错字语病） -->
             <div id="qm-intro" class="vertical-text font-kangxi" style="display: none;">
                 清明风，东南风也。清，明也。风以洁，清明而朗也。<br>
                 属巽，八音为木。<br>
                 立夏之风。
             </div>
 
+            <!-- 幕三：全景长卷舞台 -->
             <div id="qm-content-stage">
                 <div id="ink-splash"></div>
 
@@ -216,6 +219,7 @@ export default async function playQingming(container) {
                 <div class="trigger-dot" id="dot-e" style="right: 12%; top: 48%;"></div>
             </div>
 
+            <!-- 结束引线：8个字 -->
             <div id="qm-next-prompt" class="font-kangxi">清明雨歇。点击续行。</div>
         </div>
     `;
@@ -231,7 +235,7 @@ export default async function playQingming(container) {
     container.classList.add('active');
     await wait(400);
 
-    // ====== 第一幕：“清明”居中大字 ======
+    // ====== 第一幕：“清明”大字 ======
     titleScreen.style.opacity = 1;
     await nextClick(wrapper);
     titleScreen.style.opacity = 0;
@@ -247,23 +251,21 @@ export default async function playQingming(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：进入全景长卷舞台 ======
+    // ====== 第三幕：全景交互大舞台亮起 ======
     contentStage.style.display = 'block';
     await wait(50);
     contentStage.style.opacity = 1;
 
-    // 🌟【时序重构】第一步：轰轰烈烈地炸开一记浓黑水墨水纹圈
+    // 水墨涟漪大水滴绽放
     inkSplash.classList.add('ink-blooming');
-    
-    // 🌟【时序重构】第二步：死锁 2.5 秒，强制等待水波完全激荡完毕并消散归零！
     await wait(2500);
-    inkSplash.style.display = 'none'; // 彻底销毁水波图层，实现“水滴先出现并消失”
+    inkSplash.style.display = 'none'; 
 
-    // 🌟【时序重构】第三步：水滴彻底消散后，芭蕉叶和斜织雨线才开始优雅、干净地淡入
+    // 芭蕉与风雨淡入
     artZone.style.opacity = '0.85';
     await wait(1200); 
 
-    // 🌟【时序重构】第四步：画面平稳后，五个悬浮触发热区才正式亮起迎客
+    // 唤醒交互热区
     const dotsList = ['dot-a', 'dot-b', 'dot-c', 'dot-d', 'dot-e'];
     dotsList.forEach(dotId => {
         const d = document.getElementById(dotId);
@@ -271,61 +273,64 @@ export default async function playQingming(container) {
         d.style.pointerEvents = 'auto';
     });
 
-    // 绝对的线性时序计数器
-    let currentRevealedIndex = 0;
+    // 🌟【核心修复】创建一个完全被包裹的异步承诺，锁死全长探索时序
+    const chapterExploration = new Promise(resolveExploration => {
+        let currentRevealedIndex = 0;
 
-    dotsList.forEach(dotId => {
-        const dot = document.getElementById(dotId);
-        dot.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            dot.classList.add('clicked'); 
-            
-            const item = shortChapters[currentRevealedIndex];
-            
-            // 创建单列小诗
-            const poemColumn = document.createElement('div');
-            poemColumn.className = 'poem-column';
-            poemColumn.innerHTML = `
-                <div class="poem-title font-kangxi">${item.title}</div>
-                <div style="line-height: 2.3; letter-spacing: 0.15em;">${convertToSpans(item.content)}</div>
-            `;
-            
-            // 🌟【物理层级双轨控制】
-            if (currentRevealedIndex < 3) {
-                // 其一、其二、其三 稳稳流向第一排轨道（高位）
-                document.getElementById('tiba-row-top').appendChild(poemColumn);
-            } else {
-                // 其四、其五 稳稳流向第二排轨道（低位），绝不发生横向溢出
-                document.getElementById('tiba-row-bottom').appendChild(poemColumn);
-            }
-
-            currentRevealedIndex++;
-
-            // 驱动水墨笔迹渐现
-            await revealPoemText(poemColumn, 45);
-            
-            // 当五章集齐，执行空灵谢幕
-            if (currentRevealedIndex === 5) {
-                await wait(5000); 
+        dotsList.forEach(dotId => {
+            const dot = document.getElementById(dotId);
+            dot.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                if (dot.classList.contains('clicked')) return;
+                dot.classList.add('clicked'); 
                 
-                // 诗行与芭蕉齐消散，给最末一句话留出最干净的宣纸白地
-                document.getElementById('tiba-row-top').style.opacity = 0;
-                document.getElementById('tiba-row-bottom').style.opacity = 0;
-                artZone.style.opacity = 0;
-                await wait(2000);
+                const item = shortChapters[currentRevealedIndex];
+                const poemColumn = document.createElement('div');
+                poemColumn.className = 'poem-column';
+                poemColumn.innerHTML = `
+                    <div class="poem-title font-kangxi">${item.title}</div>
+                    <div style="line-height: 2.3; letter-spacing: 0.15em;">${convertToSpans(item.content)}</div>
+                `;
                 
-                document.getElementById('tiba-row-top').innerHTML = '';
-                document.getElementById('tiba-row-bottom').innerHTML = '';
+                if (currentRevealedIndex < 3) {
+                    document.getElementById('tiba-row-top').appendChild(poemColumn);
+                } else {
+                    document.getElementById('tiba-row-bottom').appendChild(poemColumn);
+                }
 
-                // 唤醒正中央放大的“清明雨歇”
-                nextPrompt.style.display = 'block';
-                await wait(50);
-                nextPrompt.style.opacity = 1;
-            }
+                currentRevealedIndex++;
+                await revealPoemText(poemColumn, 45);
+                
+                // 当 5 首诗全部集齐，开始执行高雅的空灵谢幕时序
+                if (currentRevealedIndex === 5) {
+                    await wait(5000); 
+                    
+                    // 诗行与芭蕉平缓消失
+                    document.getElementById('tiba-row-top').style.opacity = 0;
+                    document.getElementById('tiba-row-bottom').style.opacity = 0;
+                    artZone.style.opacity = 0;
+                    await wait(2000);
+                    
+                    document.getElementById('tiba-row-top').innerHTML = '';
+                    document.getElementById('tiba-row-bottom').innerHTML = '';
+
+                    // 🌟 此时在空无一物的白宣中央，安稳、大气地亮起最后这 8 个大字！
+                    nextPrompt.style.display = 'block';
+                    await wait(50);
+                    nextPrompt.style.opacity = 1;
+
+                    // 🌟 唯独在这里，才正式开始监听对大背景的“最后一击”！杜绝中途抢跑
+                    await nextClick(wrapper);
+                    resolveExploration(); // 彻底释放阻塞
+                }
+            });
         });
     });
 
-    await nextClick(wrapper);
+    // 阻塞等待，直到所有的探索行为和最终确认点击完全收官
+    await chapterExploration;
+
+    // 优雅离场
     container.classList.remove('active');
     await wait(2500);
     container.innerHTML = '';
