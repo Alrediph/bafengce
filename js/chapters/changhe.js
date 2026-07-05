@@ -5,26 +5,26 @@ const nextClick = (element) => new Promise(resolve => {
     element.addEventListener('click', resolve, { once: true });
 });
 
-// 纯代码高级数字音频合成器：无资产依赖，完美还原传统“磬音”的空灵空旷
+// 🌟 纯代码高级数字音频合成器：无资产依赖，仿真还原传统“磬音”的空灵深远
 function playChimeGong() {
     try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
         const ctx = new AudioContext();
         
-        // 基音 Oscillator：仿真磬的青铜敲击震颤
+        // 基音 Oscillator：模拟青铜器物敲击的厚重震鸣
         const osc1 = ctx.createOscillator();
         const gain1 = ctx.createGain();
         osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(293.66, ctx.currentTime); // D4 调，深沉安宁
+        osc1.frequency.setValueAtTime(293.66, ctx.currentTime); // D4 调，幽静沉稳
         
-        // 泛音 Oscillator：营造“极远、极轻”的空间飘渺感
+        // 泛音 Oscillator：注入空灵、轻远的空气流动感
         const osc2 = ctx.createOscillator();
         const gain2 = ctx.createGain();
         osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(587.33, ctx.currentTime); // 高八度泛音对冲
+        osc2.frequency.setValueAtTime(587.33, ctx.currentTime); // 高八度对冲
         
-        // 悠长的时间衰减曲线（持续 4.5 秒的漫长尾憩）
+        // 4.5秒漫长衰减的空气尾憩时间曲线
         gain1.gain.setValueAtTime(0.3, ctx.currentTime);
         gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 4.5);
         
@@ -41,7 +41,7 @@ function playChimeGong() {
         osc1.stop(ctx.currentTime + 4.6);
         osc2.stop(ctx.currentTime + 4.6);
     } catch (e) {
-        console.warn("磬音合成受浏览器安全策略暂拦截", e);
+        console.warn("磬音合成受浏览器安全策略拦截：", e);
     }
 }
 
@@ -52,6 +52,7 @@ export default async function playChanghe(container) {
                 width: 100%; height: 100%;
                 display: flex; justify-content: center; align-items: center;
                 position: relative; 
+                /* 秋分清冽安宁的暮色深蓝灰与墨灰渐变夜空 */
                 background: linear-gradient(to bottom, #11161e 0%, #1d2530 100%);
                 user-select: none; overflow: hidden;
             }
@@ -74,34 +75,32 @@ export default async function playChanghe(container) {
             #ch-content-stage {
                 width: 100%; height: 100%; display: none; opacity: 0;
                 transition: opacity 2s ease; position: relative;
+                display: flex; justify-content: center; align-items: center;
             }
 
-            /* 🌟【大魄力重构：2006年1月真实冬季全景星空图层】 */
+            /* 🌟 全局隐约星空背景（贯穿全屏） */
             .global-starry-background {
                 position: absolute; width: 100vw; height: 100vh;
                 top: 0; left: 0; z-index: 1; pointer-events: none;
-                /* 初始处于极其克制、微弱、含蓄的隐约状态 */
-                opacity: 0.16; 
+                opacity: 0.16; /* 初始朦胧如暗纹 */
                 transition: opacity 3s cubic-bezier(0.25, 1, 0.5, 1);
             }
             .global-starry-background.awaken {
-                opacity: 0.75; /* 天门大开时，星河轰然觉醒耀眼 */
+                opacity: 0.75; /* 愿望起航时，繁星轰然觉醒 */
             }
 
-            /* 天文学写意经纬细格网 */
-            .astro-grid { stroke: rgba(225,210,180,0.15); stroke-width: 0.5; fill: none; stroke-dasharray: 1 5; }
-            /* 星座连线：极细白描骨骼 */
-            .constellation-line { stroke: rgba(255,255,255,0.22); stroke-width: 0.6; fill: none; }
-            /* 冬季大三角：神圣连线 */
-            .winter-triangle-line { stroke: rgba(205,168,105,0.3); stroke-width: 0.8; stroke-dasharray: 3 3; fill: none; }
+            /* 天文学定位线 */
+            .astro-grid { stroke: rgba(225,210,180,0.12); stroke-width: 0.5; fill: none; stroke-dasharray: 1 5; }
+            .constellation-line { stroke: rgba(255,255,255,0.2); stroke-width: 0.6; fill: none; }
+            .winter-triangle-line { stroke: rgba(205,168,105,0.25); stroke-width: 0.8; stroke-dasharray: 3 3; fill: none; }
             
-            /* 恒星核心：带呼吸感的微光 */
+            /* 恒星璀璨级 */
             .star-node { fill: #ffffff; filter: drop-shadow(0 0 3px rgba(255,255,255,0.8)); }
-            .star-node.alpha { fill: #ffdbb0; filter: drop-shadow(0 0 5px rgba(255,220,180,0.9)); } /* 参宿四等一等星 */
-            .star-node.sirius { fill: #bde0ff; filter: drop-shadow(0 0 7px rgba(189,224,255,1)); } /* 耀眼天狼星 */
-            .star-node.vermilion { fill: #962929; opacity: 0.8; } /* 朱砂红星群 */
+            .star-node.alpha { fill: #ffdbb0; filter: drop-shadow(0 0 5px rgba(255,220,180,0.9)); } 
+            .star-node.sirius { fill: #bde0ff; filter: drop-shadow(0 0 7px rgba(189,224,255,1)); } 
+            .star-node.vermilion { fill: #962929; opacity: 0.8; }
 
-            /* 🌟【写意重门深锁双扉】只包裹中央的核心交互区，不再污染全屏边界 */
+            /* 中央木刻大框格安全岛 */
             .gate-universe-box {
                 position: absolute; top: 50%; left: 50%;
                 transform: translate(-50%, -50%);
@@ -110,20 +109,22 @@ export default async function playChanghe(container) {
                 display: flex; justify-content: center; align-items: center;
                 z-index: 2;
             }
+            
+            /* 阊阖深锁重门 */
             .gate-leaf {
                 position: absolute; top: 0; width: 50%; height: 100%;
-                background-color: rgba(17, 22, 30, 0.95); /* 融入暮色的重门 */
+                background-color: rgba(17, 22, 30, 0.95); 
                 box-sizing: border-box; z-index: 5;
                 transition: transform 2.5s cubic-bezier(0.66, 0, 0.2, 1);
             }
             .gate-leaf-left { left: 0; border-right: 1px solid rgba(255,255,255,0.03); }
             .gate-leaf-right { right: 0; border-left: 1px solid rgba(255,255,255,0.03); }
             
-            /* 当愿望升空时，中央重门朝两侧退场 */
+            /* 门扉向两侧大开 */
             .gate-universe-box.open .gate-leaf-left { transform: translateX(-100%); }
             .gate-universe-box.open .gate-leaf-right { transform: translateX(100%); }
 
-            /* 阊阖门中透下的一缕淡光 */
+            /* 一缕天光 */
             .heaven-ray {
                 position: absolute; top: 0; left: 50%; transform: translateX(-50%);
                 width: 180px; height: 100%;
@@ -131,7 +132,7 @@ export default async function playChanghe(container) {
                 pointer-events: none; z-index: 3;
             }
 
-            /* 极简祈福牌 */
+            /* 不雕不饰简朴祈福牌 */
             .prayer-plaque-container {
                 position: absolute; top: 46%; left: 50%;
                 transform: translate(-50%, -40%);
@@ -149,7 +150,7 @@ export default async function playChanghe(container) {
                 width: 1px; height: 35px; background-color: rgba(150,41,41,0.4);
             }
             
-            /* 愿望文字：纯正竖排手书行气 */
+            /* 牌面愿望手书体 */
             .plaque-wish-text {
                 writing-mode: vertical-rl; height: 100%; width: 100%;
                 font-family: 'Kaiti', 'STKaiti', serif;
@@ -158,7 +159,7 @@ export default async function playChanghe(container) {
                 text-align: start; display: block; word-break: break-all;
             }
 
-            /* 斜依的毛笔 */
+            /* 静卧在侧的毛笔 */
             .calligraphy-brush {
                 position: absolute; top: 52%; left: 56%;
                 width: 8px; height: 180px;
@@ -173,14 +174,14 @@ export default async function playChanghe(container) {
                 clip-path: polygon(50% 100%, 0 0, 100% 0);
             }
 
-            /* 祈福牌载愿升空 */
+            /* 发光并升空隐入门中 */
             .prayer-plaque-container.ascend {
                 box-shadow: 0 0 50px rgba(255,254,220,0.85);
                 transform: translate(-50%, -190vh) scale(0.12); 
                 opacity: 0.05;
             }
 
-            /* 落墨案台 */
+            /* 墨砚落砚台 */
             .ink-writing-overlay {
                 position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%);
                 z-index: 8; width: 320px; display: none; opacity: 0;
@@ -223,19 +224,23 @@ export default async function playChanghe(container) {
         </style>
 
         <div class="changhe-wrapper" id="ch-wrapper">
-            
             <svg class="global-starry-background" id="ch-starry-bg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
                 <circle cx="960" cy="540" r="300" class="astro-grid" />
                 <circle cx="960" cy="540" r="500" class="astro-grid" />
                 <line x1="0" y1="540" x2="1920" y2="540" class="astro-grid" />
                 <line x1="960" y1="0" x2="960" y2="1080" class="astro-grid" />
 
-                <polyline points="910,360 1010,380 1030,520 930,500 910,360" class="constellation-line" /> <line x1="910" y1="360" x2="955,440" class="constellation-line" />
+                <polyline points="910,360 1010,380 1030,520 930,500 910,360" class="constellation-line" />
+                <line x1="910" y1="360" x2="955,440" class="constellation-line" />
                 <line x1="1010" y1="380" x2="975,442" class="constellation-line" />
-                <polyline points="910,360 870,330 840,340" class="constellation-line" /> <circle cx="910" cy="360" r="5.5" class="star-node alpha" /> <circle cx="1010" cy="380" r="4.5" class="star-node" />       <circle cx="1030" cy="520" r="6.0" class="star-node alpha" /> <circle cx="930" cy="500" r="4.0" class="star-node" />       <circle cx="955" cy="440" r="3.5" class="star-node" />       <circle cx="965" cy="441" r="3.5" class="star-node" />       <circle cx="975" cy="442" r="3.5" class="star-node" />       <polyline points="1120,680 1180,740 1240,710 1180,630 1120,680" class="constellation-line" />
-                <circle cx="1120" cy="680" r="8.5" class="star-node sirius" /> 
+                <polyline points="910,360 870,330 840,340" class="constellation-line" />
+                <circle cx="910" cy="360" r="5.5" class="star-node alpha" /> <circle cx="1010" cy="380" r="4.5" class="star-node" /> 
+                <circle cx="1030" cy="520" r="6.0" class="star-node alpha" /> <circle cx="930" cy="500" r="4.0" class="star-node" /> 
+                <circle cx="955" cy="440" r="3.5" class="star-node" /> <circle cx="965" cy="441" r="3.5" class="star-node" /> 
+                <circle cx="975" cy="442" r="3.5" class="star-node" /> 
 
-                <line x1="1160" y1="320" x2="1240" y2="340" class="constellation-line" />
+                <polyline points="1120,680 1180,740 1240,710 1180,630 1120,680" class="constellation-line" />
+                <circle cx="1120" cy="680" r="8.5" class="star-node sirius" /> <line x1="1160" y1="320" x2="1240" y2="340" class="constellation-line" />
                 <circle cx="1160" cy="320" r="5.0" class="star-node alpha" /> <polygon points="910,360 1120,680 1160,320" class="winter-triangle-line" />
 
                 <polyline points="810,260 740,210 680,230" class="constellation-line" />
@@ -244,8 +249,6 @@ export default async function playChanghe(container) {
                     <circle cx="5" cy="-4" r="1.2" class="star-node vermilion" />
                     <circle cx="-4" cy="6" r="1.5" class="star-node vermilion" />
                     <circle cx="8" cy="4" r="1.0" class="star-node vermilion" />
-                    <circle cx="-2" cy="-6" r="1.2" class="star-node vermilion" />
-                    <circle cx="12" cy="-2" r="1.3" class="star-node vermilion" />
                 </g>
             </svg>
 
@@ -258,7 +261,6 @@ export default async function playChanghe(container) {
             </div>
 
             <div id="ch-content-stage">
-                
                 <div class="woodblock-catalog-container gate-universe-box">
                     <div class="ch-gate-overlay" id="ch-gate-box">
                         <div class="gate-leaf gate-leaf-left"></div>
@@ -296,21 +298,20 @@ export default async function playChanghe(container) {
     const writingPanel = document.getElementById('ch-writing-panel');
     const wishInput = document.getElementById('wish-input');
     const btnSubmit = document.getElementById('btn-submit-wish');
-    
     const gateBox = document.getElementById('ch-gate-box');
     const pushTip = document.getElementById('gate-push-tip');
 
     container.classList.add('active');
     await wait(400);
 
-    // ====== 第一幕：“阊阖风”居中 ======
+    // ====== 第一幕：居中大字 ======
     titleScreen.style.opacity = 1;
     await nextClick(wrapper);
     titleScreen.style.opacity = 0;
     await wait(2000);
     titleScreen.style.display = 'none';
 
-    // ====== 第二幕：定稿启幕词 ======
+    // ====== 第二幕：启幕词 ======
     intro.style.display = 'block';
     await wait(50);
     intro.style.opacity = 1;
@@ -319,13 +320,14 @@ export default async function playChanghe(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：清冽暮色大舞台亮起 ======
+    // ====== 第三幕：交互核心大舞台 ======
     contentStage.style.display = 'block';
     await wait(50);
     contentStage.style.opacity = 1;
     await wait(400);
     pushTip.style.opacity = 0.85;
 
+    // 点击唤醒落墨案板
     const triggerWritingState = (e) => {
         e.stopPropagation();
         if (writingPanel.style.display === 'block') return;
@@ -344,11 +346,11 @@ export default async function playChanghe(container) {
         textSlot.innerText = wishInput.value;
     });
 
-    // ====== 第四幕：高潮送愿 ======
+    // ====== 第四幕：确认送愿入天门 ======
     btnSubmit.addEventListener('click', async (e) => {
         e.stopPropagation();
         const wishContent = wishInput.value.trim();
-        if (!wishContent) return; 
+        if (!wishContent) return; // 必须书写方可投递
 
         writingPanel.style.opacity = 0;
         brush.style.opacity = 0;
@@ -357,31 +359,32 @@ export default async function playChanghe(container) {
         brush.style.display = 'none';
         pushTip.style.opacity = 0;
 
-        // 1. 全局 2006 年 1 月星空夜幕瞬间被唤醒，流溢璀璨高亮！
+        // 1. 2006年1月星空背景泛起璀璨高光
         starryBg.classList.add('awaken');
 
-        // 2. 重门大启向两侧大幅拉开！
+        // 2. 阊阖重门朝着左右两侧大幅撤开
         gateBox.classList.add('open');
         await wait(1000);
 
-        // 3. 祈福牌发光并冉冉上升，跨越时间尺度隐入 2006 年的夜穹极深处
+        // 3. 祈福牌载着愿望发光、冉冉升起，隐入2006星海极深处
         plaque.classList.add('ascend');
         
-        // 4. 磬音回荡长鸣
+        // 4. 🌟 磬音回荡长鸣：天门微启复阖的悠远青铜残音
         playChimeGong();
 
-        // 驻留 5.5 秒供人把玩欣赏
+        // 驻留 5.5 秒供人静读和把玩星空
         await wait(5500);
 
-        // 舞台清场，画面重归绝对的空寂留白
+        // 舞台清场，所有数据一并粉碎净化，作品不保留任何实际愿望数据
         contentStage.style.opacity = 0;
         await wait(2500);
         contentStage.innerHTML = ''; 
 
-        // 5. 唯余两片微弱的枯叶在空旷的 2006 隐约星轨下悠然飘落
+        // 5. 最终幕：隐隐约约的 2006 星空下，飘落两片寂静的落叶
         spawnDriftingLeaves();
         await wait(5000);
 
+        // 顺利撤场，交还控制流给下一开
         container.classList.remove('active');
     });
 
