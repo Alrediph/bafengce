@@ -5,7 +5,7 @@ const nextClick = (element) => new Promise(resolve => {
     element.addEventListener('click', resolve, { once: true });
 });
 
-// 辅助函数：将字符用带有动态模糊过渡的span包裹，实现细腻的墨迹渐显
+// 辅助函数：将字符用带有动态模糊过渡的span包裹，实现更细腻的墨迹渐显
 function convertToSpans(htmlString) {
     let result = '';
     let inTag = false;
@@ -58,34 +58,41 @@ export default async function playQingming(container) {
                 transition: opacity 1.5s ease; position: relative;
             }
             
-            /* 【核心修复】两排错落题跋区：由上下两个独立行容器组成，彻底解决横向出界 */
-            .tiba-zone {
-                position: absolute; 
-                right: 52vw; /* 定位于屏幕中线左侧 */
-                top: 8vh; 
-                height: 84vh;
+            /* 【核心修复：双层固定物理轨道】彻底废除不稳定的嵌套Flex，使用绝对高度错开上下排 */
+            .tiba-row-top {
+                position: absolute;
+                right: 52vw; /* 从中线偏左开始往左平铺 */
+                top: 10vh;
+                height: 36vh;
                 display: flex;
-                flex-direction: column; /* 垂直排布上下两排 */
-                justify-content: space-between;
-                pointer-events: none;
+                flex-direction: column; /* 在竖排文字下，column代表真正的横向并排 */
+                justify-content: flex-start;
+                align-items: flex-start;
+                writing-mode: vertical-rl;
+                gap: 55px; /* 每首诗之间不可撼动的黄金留白 */
+                transition: opacity 2s ease;
             }
             
-            .tiba-row {
+            .tiba-row-bottom {
+                position: absolute;
+                right: 52vw; /* 与第一排对齐线完全咬死，绝错位 */
+                top: 52vh; /* 精准定位在下半部分，坚决防止出界 */
+                height: 36vh;
                 display: flex;
-                flex-direction: row-reverse; /* 经典右向左流布 */
-                align-items: flex-start;
+                flex-direction: column;
                 justify-content: flex-start;
-                height: 38vh; /* 严格死锁单排高度 */
-                gap: 50px; /* 每首诗列之间的留白间距 */
+                align-items: flex-start;
+                writing-mode: vertical-rl;
+                gap: 55px;
+                transition: opacity 2s ease;
             }
             
             .poem-column {
                 font-size: 1.05rem; 
                 color: #333333;
                 height: 100%;
-                writing-mode: vertical-rl; /* 诗行内部垂直流动 */
                 white-space: nowrap;
-                pointer-events: auto;
+                flex-shrink: 0;
             }
             
             .poem-title { 
@@ -95,12 +102,12 @@ export default async function playQingming(container) {
                 font-size: 1.15rem; 
             }
 
-            /* 右侧白描意象区：初始隐藏，等待水滴完全消散后再浮现 */
+            /* 右侧白描写意艺术区：初始隐藏 */
             .ink-art-zone {
                 position: absolute; right: 5%; bottom: 5%; width: 45vw; height: 80vh;
                 pointer-events: none;
                 opacity: 0;
-                transition: opacity 2.5s ease; /* 优雅的二秒浮显过渡 */
+                transition: opacity 2s ease;
             }
             .banana-svg { width: 100%; height: 100%; }
             
@@ -122,7 +129,7 @@ export default async function playQingming(container) {
             }
             .sway-leaf { transform-origin: 90% 90%; animation: leaf-breathe 8s ease-in-out infinite; }
 
-            /* 意境触发热区：初始完全隐藏 */
+            /* 意境触发点：初始完全隐藏且不可点击 */
             .trigger-dot {
                 position: absolute; width: 40px; height: 40px;
                 background: radial-gradient(circle, rgba(160,175,165,0.18) 0%, rgba(255,255,255,0) 70%);
@@ -138,24 +145,35 @@ export default async function playQingming(container) {
             .trigger-dot:hover { transform: scale(1.4); background: radial-gradient(circle, rgba(160,175,165,0.35) 0%, rgba(255,255,255,0) 70%); }
             .trigger-dot.clicked { pointer-events: none; opacity: 0 !important; }
 
-            /* 【完美重写】极其明显且独立的浓墨落纸生水波涟漪特效 */
+            /* 【高饱和度真水波特效】显著加深浓黑对比度，模拟浓墨击中纸面荡开涟漪 */
             #ink-splash {
-                position: absolute; width: 40px; height: 40px;
-                top: 50%; left: 50%; transform: translate(-50%, -50%);
+                position: absolute; width: 50px; height: 50px;
+                top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
                 border-radius: 50%; pointer-events: none; opacity: 0;
+                box-sizing: border-box;
             }
             @keyframes water-ripple-effect {
-                0% { transform: translate(-50%, -50%) scale(0); opacity: 0; background: rgba(0, 0, 0, 0.85); border: 0px solid transparent; }
-                12% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; background: rgba(0, 0, 0, 0.75); }
-                30% { transform: translate(-50%, -50%) scale(4); opacity: 0.5; background: transparent; border: 4px solid rgba(0, 0, 0, 0.55); filter: blur(1px); }
+                0% { transform: translate(-50%, -50%) scale(0); opacity: 1; background: rgba(0, 0, 0, 0.95); border: 0px solid transparent; }
+                15% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; background: rgba(0, 0, 0, 0.85); }
+                35% { transform: translate(-50%, -50%) scale(4); opacity: 0.7; background: transparent; border: 6px solid rgba(0, 0, 0, 0.7); }
                 100% { transform: translate(-50%, -50%) scale(28); opacity: 0; border: 1px solid rgba(0, 0, 0, 0); filter: blur(10px); }
             }
-            .ink-blooming { animation: water-ripple-effect 2.8s cubic-bezier(0.1, 0.6, 0.2, 1) forwards; }
+            .ink-blooming { animation: water-ripple-effect 2.5s cubic-bezier(0.1, 0.6, 0.2, 1) forwards; }
             
+            /* 【核心修复：结尾词居中放大】 */
             #qm-next-prompt {
-                position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%);
-                font-size: 1.1rem; letter-spacing: 0.3em; color: #a0a0a0;
-                opacity: 0; transition: opacity 2s ease; cursor: pointer; display: none;
+                position: absolute; 
+                top: 50%; left: 50%; 
+                transform: translate(-50%, -50%); /* 完美的正中央绝对死锁 */
+                font-size: 1.8rem; /* 字体显著放大，极具视觉张力 */
+                letter-spacing: 0.5em; 
+                color: #4a4a4a;
+                opacity: 0; 
+                transition: opacity 2s ease; 
+                cursor: pointer; 
+                display: none;
+                white-space: nowrap;
+                text-align: center;
             }
         </style>
 
@@ -163,7 +181,7 @@ export default async function playQingming(container) {
             <div id="qm-title-screen" class="vertical-text font-kangxi">清明</div>
 
             <div id="qm-intro" class="vertical-text font-kangxi" style="display: none;">
-                清明风，东南风 also。清，明也。风以洁，清明而朗也。<br>
+                清明风，东南风也。清，明也。风以洁，清明而朗也。<br>
                 属巽，八音为木。<br>
                 立夏之风。
             </div>
@@ -171,8 +189,8 @@ export default async function playQingming(container) {
             <div id="qm-content-stage">
                 <div id="ink-splash"></div>
 
-                <div class="tiba-zone">
-                    <div id="tiba-row-top" class="tiba-row"></div>    <div id="tiba-row-bottom" class="tiba-row"></div> </div>
+                <div id="tiba-row-top" class="tiba-row-top"></div>    
+                <div id="tiba-row-bottom" class="tiba-row-bottom"></div> 
 
                 <div class="ink-art-zone">
                     <svg class="banana-svg" viewBox="0 0 500 700">
@@ -229,23 +247,23 @@ export default async function playQingming(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：全景长卷入场 ======
+    // ====== 第三幕：进入全景长卷舞台 ======
     contentStage.style.display = 'block';
     await wait(50);
     contentStage.style.opacity = 1;
 
-    // 🌟 核心时序一：触发极其醒目且激烈的水波砸落动画
+    // 🌟【时序重构】第一步：轰轰烈烈地炸开一记浓黑水墨水纹圈
     inkSplash.classList.add('ink-blooming');
     
-    // 🌟 核心时序二：硬性等待 2.8 秒，确保水滴与涟漪完全扩散并消散完毕！
-    await wait(2800);
-    inkSplash.style.display = 'none'; // 彻底清场
+    // 🌟【时序重构】第二步：死锁 2.5 秒，强制等待水波完全激荡完毕并消散归零！
+    await wait(2500);
+    inkSplash.style.display = 'none'; // 彻底销毁水波图层，实现“水滴先出现并消失”
 
-    // 🌟 核心时序三：水滴退场后，芭蕉叶和斜织雨线才开始舒缓淡入
+    // 🌟【时序重构】第三步：水滴彻底消散后，芭蕉叶和斜织雨线才开始优雅、干净地淡入
     artZone.style.opacity = '0.85';
-    await wait(1500); // 等待画面稳定
+    await wait(1200); 
 
-    // 🌟 核心时序四：最后激活并浮现五个微光交互热区
+    // 🌟【时序重构】第四步：画面平稳后，五个悬浮触发热区才正式亮起迎客
     const dotsList = ['dot-a', 'dot-b', 'dot-c', 'dot-d', 'dot-e'];
     dotsList.forEach(dotId => {
         const d = document.getElementById(dotId);
@@ -253,7 +271,7 @@ export default async function playQingming(container) {
         d.style.pointerEvents = 'auto';
     });
 
-    // 绝对的线性计数器
+    // 绝对的线性时序计数器
     let currentRevealedIndex = 0;
 
     dotsList.forEach(dotId => {
@@ -264,7 +282,7 @@ export default async function playQingming(container) {
             
             const item = shortChapters[currentRevealedIndex];
             
-            // 创建单列诗词
+            // 创建单列小诗
             const poemColumn = document.createElement('div');
             poemColumn.className = 'poem-column';
             poemColumn.innerHTML = `
@@ -272,28 +290,34 @@ export default async function playQingming(container) {
                 <div style="line-height: 2.3; letter-spacing: 0.15em;">${convertToSpans(item.content)}</div>
             `;
             
-            // 🌟【分排分流逻辑】
+            // 🌟【物理层级双轨控制】
             if (currentRevealedIndex < 3) {
-                // 其一、其二、其三 自动进入第一排（上层行容器）
+                // 其一、其二、其三 稳稳流向第一排轨道（高位）
                 document.getElementById('tiba-row-top').appendChild(poemColumn);
             } else {
-                // 其四、其五 自动进入第二排（下层行容器），绝不发生横向溢出
+                // 其四、其五 稳稳流向第二排轨道（低位），绝不发生横向溢出
                 document.getElementById('tiba-row-bottom').appendChild(poemColumn);
             }
 
             currentRevealedIndex++;
 
-            // 启动手写渐现
+            // 驱动水墨笔迹渐现
             await revealPoemText(poemColumn, 45);
             
+            // 当五章集齐，执行空灵谢幕
             if (currentRevealedIndex === 5) {
                 await wait(5000); 
-                const tibaZone = document.querySelector('.tiba-zone');
-                tibaZone.style.opacity = 0;
-                tibaZone.style.transition = 'opacity 2.5s ease';
-                await wait(2500);
-                tibaZone.innerHTML = '';
+                
+                // 诗行与芭蕉齐消散，给最末一句话留出最干净的宣纸白地
+                document.getElementById('tiba-row-top').style.opacity = 0;
+                document.getElementById('tiba-row-bottom').style.opacity = 0;
+                artZone.style.opacity = 0;
+                await wait(2000);
+                
+                document.getElementById('tiba-row-top').innerHTML = '';
+                document.getElementById('tiba-row-bottom').innerHTML = '';
 
+                // 唤醒正中央放大的“清明雨歇”
                 nextPrompt.style.display = 'block';
                 await wait(50);
                 nextPrompt.style.opacity = 1;
