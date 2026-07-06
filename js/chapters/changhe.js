@@ -5,7 +5,7 @@ const nextClick = (element) => new Promise(resolve => {
     element.addEventListener('click', resolve, { once: true });
 });
 
-// 纯代码高级数字音频合成器：无资产依赖，仿真还原传统“磬音”的空灵深远
+// 纯代码高级数字音频合成器
 function playChimeGong() {
     try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -43,13 +43,8 @@ function playChimeGong() {
 }
 
 export default async function playChanghe(container) {
-    // 路由安全守卫
-    if (window.currentActiveChapter === undefined) {
-        window.currentActiveChapter = 5; 
-    }
-    while (window.currentActiveChapter < 5) {
-        await wait(200); 
-    }
+    // 强行激活当前状态
+    window.currentActiveChapter = 5; 
 
     container.innerHTML = `
         <style>
@@ -220,7 +215,6 @@ export default async function playChanghe(container) {
                 <circle cx="1850" cy="670" r="1.1" class="star-node ambient" />
 
                 <polyline points="720,260 920,290 980,620 760,580 720,260" class="constellation-line" /> 
-                
                 <line x1="720" y1="260" x2="820" y2="440" class="constellation-line" />
                 <line x1="920" y1="290" x2="870" y2="445" class="constellation-line" />
                 
@@ -271,7 +265,7 @@ export default async function playChanghe(container) {
                     </div>
                     <div class="calligraphy-brush" id="ch-brush"></div>
                 </div>
-                <div id="gate-push-tip" class="font-kangxi">【 點擊祈福牌或毛筆，落墨祈願 】</div>
+                <div id="gate-push-tip" class="font-kangxi">【 點擊祈福牌或毛笔，落墨祈愿 】</div>
                 <div class="ink-writing-overlay font-kangxi" id="ch-writing-panel">
                     <input type="text" class="ink-input-field font-kangxi" id="wish-input" placeholder="秉笔落墨，写下祈愿" maxlength="24" autocomplete="off" />
                     <button class="ink-submit-btn font-kangxi" id="btn-submit-wish">送入門</button>
@@ -333,7 +327,6 @@ export default async function playChanghe(container) {
         textSlot.innerText = wishInput.value;
     });
 
-    // 🌟【时序放行核心流控制】
     return new Promise((resolveNextChapter) => {
         btnSubmit.addEventListener('click', async (e) => {
             e.stopPropagation();
@@ -360,13 +353,37 @@ export default async function playChanghe(container) {
             contentStage.innerHTML = ''; 
 
             spawnDriftingLeaves();
-            await wait(5000);
+            await wait(3000);
             container.innerHTML = '';
             container.classList.remove('active');
 
-            // 🌟 递交第六开放行钥匙，并彻底释放当前 Promise 的阻塞！
+            // 🌟【强力双控放行】
             window.currentActiveChapter = 6;
             resolveNextChapter();
+
+            // ⚡【核心自愈补充机制】：如果主调度链条迟钝未响应，我们替它直接唤醒第六开
+            setTimeout(() => {
+                const nextBox = document.getElementById('chapter-6');
+                if (nextBox && !nextBox.classList.contains('active')) {
+                    console.log("⚡ 触发应急唤醒机制，强行调取不周风章节...");
+                    import('./buzhou.js').then(module => {
+                        if (typeof module.default === 'function') {
+                            module.default(nextBox);
+                        }
+                    }).catch(err => console.error("应急加载不周风失败: ", err));
+                }
+            }, 300);
         });
     });
+
+    function spawnDriftingLeaves() {
+        for (let i = 0; i < 2; i++) {
+            const leaf = document.createElement('div');
+            leaf.className = 'drifting-leaf';
+            leaf.style.left = `${40 + Math.random() * 30}%`;
+            leaf.style.animation = `leaf-drift ${5 + Math.random() * 3}s linear forwards`;
+            leaf.style.animationDelay = `${i * 1.5}s`;
+            wrapper.appendChild(leaf);
+        }
+    }
 }
