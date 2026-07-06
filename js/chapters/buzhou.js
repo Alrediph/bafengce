@@ -6,7 +6,6 @@ const nextClick = (element) => new Promise(resolve => {
 });
 
 // 🌟 Web Audio API 高精度数字声音合成器
-// 1. 仿真合成“轻叩石音”：短促、清脆、不尖锐的薄石相叩声
 function playStoneClack() {
     try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -32,7 +31,6 @@ function playStoneClack() {
     }
 }
 
-// 2. 仿真合成“极低极远西北风声”
 function playDistantWind() {
     try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -76,12 +74,10 @@ export default async function playBuzhou(container) {
                 width: 100%; height: 100%;
                 display: flex; justify-content: center; align-items: center;
                 position: relative; 
-                /* 🌟【大修正】全线采用一贯到底的干净、素雅传统宣纸白底 */
                 background-color: #ffffff;
                 user-select: none; overflow: hidden;
             }
             
-            /* 🌟 大字和启幕词全部修正为优雅的深色墨迹，与白底完美咬合 */
             #bz-title-screen { 
                 position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                 font-size: 3.8rem; letter-spacing: 0.6em; text-indent: 0.6em;
@@ -117,59 +113,81 @@ export default async function playBuzhou(container) {
                 pointer-events: none;
             }
             
-            /* 🌟【大修正】适度拓宽卡牌宽度至 135px，给竖排多列留下充裕空间 */
+            /* 🌟【3D 动画修复核心】明确 3D 视距，为子容器动画护航 */
             .bz-flip-card { 
-                width: 135px; height: 100%; perspective: 1000px; cursor: pointer; 
+                width: 145px; height: 100%; perspective: 1200px; cursor: pointer; 
             }
-            .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
-            .bz-flip-card.is-flipped .card-inner { transform: rotateY(180deg); }
-            .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 2px; box-sizing: border-box; display: flex; justify-content: center; align-items: center; }
             
-            /* 牌背面：极简干净 */
+            .card-inner { 
+                width: 100%; height: 100%; position: relative; 
+                transform-style: preserve-3d !important; 
+                transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1); 
+            }
+            
+            /* 触发翻转时，骨架整体优雅旋折 180 度 */
+            .bz-flip-card.is-flipped .card-inner { 
+                transform: rotateY(180deg); 
+            }
+            
+            /* 🌟【3D 动画修复核心】全面闭合正反两面，追加 webkit 适配，杜绝破面穿透 */
+            .card-face { 
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+                backface-visibility: hidden !important; 
+                -webkit-backface-visibility: hidden !important;
+                border-radius: 2px; box-sizing: border-box; 
+            }
+            
+            /* 牌背面（初始朝外）：硬编码三维起始角度与高层级 */
             .card-face-back { 
                 background-color: #f2efe9; border: 1px solid #dcd6cd; 
                 box-shadow: inset 0 0 15px rgba(215,200,180,0.2), 0 4px 15px rgba(0,0,0,0.03); 
+                transform: rotateY(0deg);
+                z-index: 2;
             }
             
-            /* 牌正面：大写意金石摩崖法帖风格 */
+            /* 🌟【排版终极洗炼】将正面打造成完美的纵向 Flex 展布区 */
             .card-face-front { 
                 background-color: #faf9f5; border: 1px solid #d5cbd0; 
-                box-shadow: 0 8px 24px rgba(0,0,0,0.04); padding: 40px 18px; 
-                box-sizing: border-box; 
-            }
-            
-            /* 🌟【大修正】碑刻行气控制核心骨架：利用竖排块级纵向流，从右至左规整排列 */
-            .dao-stone-content-box {
+                box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
+                padding: 35px 22px; box-sizing: border-box; 
+                transform: rotateY(180deg);
+                z-index: 1;
+                
+                /* 核心：行气竖排，且各列水平从右向左排布 */
                 writing-mode: vertical-rl !important;
-                height: 100%;
-                white-space: nowrap;
-                text-align: start;
-                display: block;
+                display: flex !important;
+                flex-direction: row !important; 
+                justify-content: center !important; 
+                align-items: flex-start !important; 
             }
             
+            /* 当翻转激活时，动态颠倒两者的物理层级，强行辅助浏览器渲染 */
+            .bz-flip-card.is-flipped .card-face-back { z-index: 1; }
+            .bz-flip-card.is-flipped .card-face-front { z-index: 2; }
+            
+            /* 正文：顶格书写 */
             .dao-stone-text { 
                 font-size: 1.28rem; font-weight: bold; color: #1c1c1c; 
                 letter-spacing: 0.22em; line-height: 1.5; 
-                display: inline-block; vertical-align: top;
                 font-family: inherit !important; 
-                filter: drop-shadow(0.5px 0.5px 0px rgba(0,0,0,0.1));
+                align-self: flex-start !important; /* 紧贴顶部 */
+                filter: drop-shadow(0.5px 0.5px 0px rgba(0,0,0,0.08));
             }
             
-            /* 🌟【大修正】让落款独立成列，并添加右侧间距与顶部衬距，使其稳稳沉淀在卡牌左下方 */
+            /* 🌟【排版终极洗炼】利用现代交叉轴对齐，让出处落款永不出界，完美沉淀于左下方 */
             .dao-stone-author { 
                 font-size: 0.85rem; color: #6d6262; 
-                display: inline-block; vertical-align: top;
-                margin-right: 16px; /* 产生优美的两列横向间距 */
-                padding-top: 85px; /* 🌟 核心：通过顶衬高度，把落款向下完美推送，绝不产生挤压 */
+                margin-right: 18px; /* 与右侧的正文列产生优雅的古籍横向间距 */
                 letter-spacing: 0.12em;
                 font-family: inherit !important; 
+                white-space: nowrap !important;
+                align-self: flex-end !important; /* 🌟 强制物理对齐木牌内部最底端，永不出界！ */
             }
             
             .dao-stone-text.weathered, .dao-stone-author.weathered { opacity: 0.05 !important; filter: blur(2px) contrast(80%) !important; }
             
             #bz-prompt-tip { position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); font-size: 1.05rem; letter-spacing: 0.25em; color: #8a999a; opacity: 0; transition: opacity 1.5s ease; pointer-events: none; z-index: 8; }
             
-            /* 下方掩卷按钮排版稳定器 */
             .bz-exit-farlbar { 
                 position: absolute; bottom: 6%; left: 50%; transform: translateX(-50%);
                 writing-mode: horizontal-tb !important; white-space: nowrap !important; 
@@ -193,45 +211,42 @@ export default async function playBuzhou(container) {
                 <canvas id="buzhou-wind-canvas"></canvas>
                 <div class="bz-cards-row" id="bz-cards-container">
                     
+                    <!-- 牌一 -->
                     <div class="bz-flip-card font-kangxi" data-idx="0">
                         <div class="card-inner">
                             <div class="card-face card-face-back"></div>
                             <div class="card-face card-face-front">
-                                <div class="dao-stone-content-box">
-                                    <div class="dao-stone-text font-kangxi">大音希聲，大象無形。</div>
-                                    <div class="dao-stone-author font-kangxi">——老子</div>
-                                </div>
+                                <div class="dao-stone-text font-kangxi">大音希聲，大象無形。</div>
+                                <div class="dao-stone-author font-kangxi">——老子</div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- 牌二 -->
                     <div class="bz-flip-card font-kangxi" data-idx="1">
                         <div class="card-inner">
                             <div class="card-face card-face-back"></div>
                             <div class="card-face card-face-front">
-                                <div class="dao-stone-content-box">
-                                    <div class="dao-stone-text font-kangxi">大塊噫氣，其名為風。</div>
-                                    <div class="dao-stone-author font-kangxi">——《莊子·齊物論》</div>
-                                </div>
+                                <div class="dao-stone-text font-kangxi">大塊噫氣，其名為風。</div>
+                                <div class="dao-stone-author font-kangxi">——《莊子·齊物論》</div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- 牌三 -->
                     <div class="bz-flip-card font-kangxi" data-idx="2">
                         <div class="card-inner">
                             <div class="card-face card-face-back"></div>
                             <div class="card-face card-face-front">
-                                <div class="dao-stone-content-box">
-                                    <div class="dao-stone-text font-kangxi">至人無己，神人無功，聖人無名。</div>
-                                    <div class="dao-stone-author font-kangxi">——《莊子·逍遥遊》</div>
-                                </div>
+                                <div class="dao-stone-text font-kangxi">至人無己，神人無功，聖人無名。</div>
+                                <div class="dao-stone-author font-kangxi">——《莊子·逍遥遊内部》</div>
                             </div>
                         </div>
                     </div>
 
                 </div>
                 <div id="bz-prompt-tip" class="font-kangxi">【 陰氣主至，順風斂字 】</div>
-                <div class="bz-exit-farlbar font-kangxi" id="bz-exit-btn"><span>【</span><span>冬</span><span>蟄</span><span>掩</span><span>卷</span><span>】</span></div>
+                <div class="bz-exit-farlbar font-kangxi" id="bz-exit-btn"><span>【</span><span>冬</span><span>蟄</span><span>抑</span><span>卷</span><span>】</span></div>
             </div>
         </div>
     `;
@@ -260,14 +275,12 @@ export default async function playBuzhou(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // 进入交互舞台，全面拥抱高洁纯白大底
     contentStage.style.display = 'flex';
     await wait(50);
     contentStage.style.opacity = 1;
     await wait(300);
     promptTip.style.opacity = 0.85;
 
-    // --- 粒子系统物理引擎：写意水墨屑散落 ---
     const ctx = canvas.getContext('2d');
     let particles = [];
     let isDrawingWind = false;
@@ -309,13 +322,12 @@ export default async function playBuzhou(container) {
                 if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
                 if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
             }
-            // 墨迹灰屑
             ctx.fillStyle = `rgba(40, 40, 40, ${0.6 - (gatherProgress/140)})`;
             ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
         });
 
         if (isDrawingWind && gatherProgress < 100) {
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.04)'; // 浅淡墨风痕
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.04)'; 
             ctx.lineWidth = 2;
             ctx.beginPath();
             for(let i=0; i<3; i++) {
