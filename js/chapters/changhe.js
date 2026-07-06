@@ -240,7 +240,7 @@ export default async function playChanghe(container) {
             </svg>
 
             <div id="lf-title-screen" style="display:none;"></div> 
-            <div id="ch-title-screen" class="vertical-text font-kangxi">阊阖风</div>
+            <div id="ch-title-screen" class="vertical-text font-kangxi">阊阖</div>
             <div id="ch-intro" class="vertical-text font-kangxi" style="display: none;">
                 阊阖风，西方风也。阊阖者，天门也。咸收藏也。<br>
                 属兑，八音为金。<br>
