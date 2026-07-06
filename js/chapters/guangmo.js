@@ -72,7 +72,6 @@ export default async function playGuangmo(container) {
 
     container.innerHTML = `
         <style>
-            /* 全线贯穿极致克制的雪原纯白大底 */
             .guangmo-wrapper {
                 width: 100%; height: 100%;
                 display: flex; justify-content: center; align-items: center;
@@ -94,7 +93,6 @@ export default async function playGuangmo(container) {
                 color: #333333; z-index: 10;
             }
             
-            /* 🌟【大组对齐外框】剥离所有弹性冲突，确保 3D 与块流共存 */
             .gm-scroll-center-stage {
                 position: relative;
                 width: 480px; height: 420px;
@@ -102,7 +100,6 @@ export default async function playGuangmo(container) {
                 align-items: center !important; justify-content: center !important;
             }
 
-            /* 🌟【古典双列块级流画布】隐藏在雪原正下方 */
             .gm-poem-layout-box {
                 width: 100%; height: 100%;
                 writing-mode: vertical-rl !important;
@@ -110,18 +107,15 @@ export default async function playGuangmo(container) {
                 padding: 40px 30px; box-sizing: border-box;
             }
             
-            /* 右列：正文瘦骨小楷 */
             .gm-text-line {
                 display: block !important;
                 font-size: 1.28rem; font-weight: bold;
                 color: #1a1a1a; opacity: 0.75;
                 line-height: 2.3; letter-spacing: 0.22em;
-                text-align: start !important;
-                margin-left: 22px;
+                text-align: start !important; margin-left: 22px;
                 font-family: inherit !important;
             }
             
-            /* 左列：出处落款，自然下沉 */
             .gm-text-author {
                 display: block !important;
                 font-size: 0.88rem; color: #666666; opacity: 0.55;
@@ -131,12 +125,11 @@ export default async function playGuangmo(container) {
                 font-family: inherit !important;
             }
 
-            /* 🌟【覆雪交互 Canvas 图层】绝对覆盖在文字上方 */
             #gm-snow-canvas {
                 position: absolute; top: 0; left: 0;
                 width: 100%; height: 100%;
                 z-index: 6; cursor: pointer;
-                transition: opacity 2.5s ease-in-out; /* 用于最后阶段的新雪覆盖动画 */
+                transition: opacity 2.5s ease-in-out; 
             }
 
             #gm-prompt-tip {
@@ -145,7 +138,6 @@ export default async function playGuangmo(container) {
                 opacity: 0; transition: opacity 1.5s ease; pointer-events: none; z-index: 8;
             }
             
-            /* 极淡的中央冬至煦暖日照 */
             .gm-warmth-glow {
                 position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                 width: 75vw; height: 70vw; border-radius: 50%;
@@ -156,23 +148,19 @@ export default async function playGuangmo(container) {
         </style>
 
         <div class="guangmo-wrapper" id="gm-wrapper">
-            <!-- 地维煦暖光晕 -->
             <div class="gm-warmth-glow" id="gm-glow-layer"></div>
 
             <div id="gm-title-screen" class="vertical-text font-kangxi">广莫风</div>
             <div id="gm-intro" class="vertical-text font-kangxi" style="display: none;">
-                广莫风，北方风也。广，大也。慢，虚也。风至则万物藏，物成而虚也。<br>
+                广莫风，北方风也。广，大也。莫，虚也。风至则万物藏，物成而虚也。<br>
                 属坎，八音为革。<br>
                 冬至之风。
             </div>
 
-            <!-- 主舞台外框 -->
             <div id="gm-content-stage" style="display: none; opacity: 0;">
                 <div class="gm-scroll-center-stage">
-                    <!-- 顶层雪盖 -->
                     <canvas id="gm-snow-canvas"></canvas>
 
-                    <!-- 底层余秋雨法帖（经典原生双列块流） -->
                     <div class="gm-poem-layout-box font-kangxi">
                         <div class="gm-text-line font-kangxi">「在这种天地中獨個兒行走，侏儒也變成了巨人。</div>
                         <div class="gm-text-line font-kangxi">在这种天地中獨個兒行走，巨人也變成了侏儒。」</div>
@@ -209,12 +197,8 @@ export default async function playGuangmo(container) {
     await wait(2000);
     intro.style.display = 'none';
 
-    // ====== 第三幕：切入纯白舞台，覆雪层初始化 ======
-    contentStage.style.display = 'flex';
-    await wait(50);
-    contentStage.style.opacity = 1;
-    await wait(300);
-    promptTip.style.opacity = 0.85;
+    // ====== 第三幕：核心时序修正 ======
+    contentStage.style.display = 'flex'; // 1. 先让舞台块级显现，但保持 opacity: 0 绝对隐形
 
     const sCtx = snowCanvas.getContext('2d');
     let isWiping = false;
@@ -226,19 +210,24 @@ export default async function playGuangmo(container) {
         snowCanvas.width = box.clientWidth;
         snowCanvas.height = box.clientHeight;
         
-        // 铺满一层温暖宣纸白/积雪白
+        // 2. 趁着隐形，立刻给 Canvas 铺满厚实的纯白粉雪，百分之百死死捂住底下的文字
         sCtx.fillStyle = '#ffffff';
         sCtx.fillRect(0, 0, snowCanvas.width, snowCanvas.height);
         
-        // 极淡的水墨霜雪纹理屑
         sCtx.fillStyle = 'rgba(0, 0, 0, 0.02)';
         for (let i = 0; i < 150; i++) {
             sCtx.fillRect(Math.random() * snowCanvas.width, Math.random() * snowCanvas.height, 2, 2);
         }
     }
-    initSnowField();
+    initSnowField(); // 在舞台淡入前，白雪就已经绘制完毕
 
-    // 绑定刮雪交互机制
+    // 3. 此时再让整个舞台平滑淡入，用户就只能看到干净的一片白雪，诗句闪现的 Bug 彻底根除
+    await wait(50);
+    contentStage.style.opacity = 1;
+    await wait(300);
+    promptTip.style.opacity = 0.85;
+
+    // 刮雪逻辑
     function startWipe() { if(!isThawTriggered) isWiping = true; }
     function processWipe(e) {
         if (!isWiping || isThawTriggered) return;
@@ -250,7 +239,6 @@ export default async function playGuangmo(container) {
 
         sCtx.globalCompositeOperation = 'destination-out';
         sCtx.beginPath();
-        // 羽化笔刷，刮雪留踪
         const grad = sCtx.createRadialGradient(x, y, 4, x, y, 32);
         grad.addColorStop(0, 'rgba(0,0,0,1)');
         grad.addColorStop(1, 'rgba(0,0,0,0)');
@@ -259,8 +247,8 @@ export default async function playGuangmo(container) {
         sCtx.fill();
 
         wipePointsCount++;
-        // 达到拂雪阈值，解密成功
-        if (wipePointsCount > 120) {
+        // 🌟【大修正】将阈值从 120 大幅上调至 320，给看画人留出极其充足的划擦面积，保证字迹被全部抚现
+        if (wipePointsCount > 320) {
             isThawTriggered = true;
             isWiping = false;
             triggerNewSnowBurialFlow();
@@ -275,45 +263,42 @@ export default async function playGuangmo(container) {
     snowCanvas.addEventListener('touchmove', processWipe);
     window.addEventListener('touchend', endWipe);
 
-    // 🌟【大高潮：诵读停留 -> 新雪自合覆灭 -> 破冰革音响彻】
     async function triggerNewSnowBurialFlow() {
-        promptTip.style.opacity = 0; // 撤走提示
-        await wait(5000); // 🔒 驻留 5 秒：足够看画人情绪饱满地将名句默读两遍！
+        promptTip.style.opacity = 0; 
+        await wait(5500); // 预留 5.5 秒让看画人静静读完名句
 
-        // 🌟 核心视觉丰富：利用 Canvas 图层混合模式变回正常，并用 2.5 秒平滑淡入纯白，实现“足迹被新雪覆盖”！
+        // 新雪自动横向刮过，将足迹和字迹再度温柔覆盖
         sCtx.globalCompositeOperation = 'source-over';
+        isThawTriggered = true;
+        
+        // 仿真新雪层层覆盖动态，平滑拉满
         snowCanvas.style.opacity = '1';
-        
-        // 用渐变动画重绘新雪
-        let opacityTracker = 0;
-        const snowCoverInterval = setInterval(() => {
-            opacityTracker += 0.04;
-            sCtx.fillStyle = `rgba(255, 255, 255, ${opacityTracker})`;
+        let currentAlpha = 0;
+        for (let i = 0; i < 20; i++) {
+            sCtx.fillStyle = `rgba(255, 255, 255, 0.08)`;
             sCtx.fillRect(0, 0, snowCanvas.width, snowCanvas.height);
-            if (opacityTracker >= 1) clearInterval(snowCoverInterval);
-        }, 30);
+            await wait(40);
+        }
 
-        await wait(2800); // 等待新雪完全覆盖，重归纯白
+        await wait(1200); 
 
-        // ====== 第四幕：极静之中的声学爆发 ======
-        playDistant革音(); // 1. 咚——极轻极沉极远的远古革鸣
-        await wait(250);
-        playCrystal破冰(); // 2. 啪啦——极其清脆剔透的冬夜水晶破冰声
+        // 咚——远古皮鼓革音长鸣震颤
+        playDistant革音();
         
-        await wait(3000); // 享受三秒袅袅余音
+        // 紧接着水晶碎裂的冬夜破冰破空而出
+        await wait(250);
+        playCrystal破冰();
+        
+        await wait(2500);
 
-        // ====== 第五幕：煦暖冬蛰，无缝渡让终章 ======
-        glowLayer.style.opacity = 1; // 纯白中央，极其温柔地渗出一抹极淡的太阳金辉
-        await wait(4200);
+        // 纯白中微渗第八开煦暖
+        glowLayer.style.opacity = 1;
+        await wait(4500);
 
-        // 彻底清空，平滑卸载控制权
-        contentStage.style.opacity = 0;
-        await wait(1500);
         contentStage.innerHTML = '';
         container.innerHTML = '';
         container.classList.remove('active');
-
-        // 步入最终回
+        
         window.currentActiveChapter = 8;
     }
 }
