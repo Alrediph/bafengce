@@ -87,7 +87,7 @@ export default async function playRongfeng(container) {
                 writing-mode: vertical-rl !important;
                 display: block !important;
                 margin-bottom: 20px;
-                transition: opacity 1.8s ease-in-out; /* 为掩卷淡出预留流畅过渡 */
+                transition: opacity 1.8s ease-in-out; 
             }
             
             /* 曾皙言志正文：巨幕字体 */
@@ -124,16 +124,27 @@ export default async function playRongfeng(container) {
             }
             .rf-final-closure-btn:hover { color: #962929; }
 
-            /* 🌟【终极祝福：愿岁并谢，与长友兮】大写意朱砂红竖排大楷 */
-            .rf-final-blessing-toast {
+            /* 🌟【终极祝福第一句：现代优雅横排导引小字】 */
+            .rf-blessing-line1-horizontal {
+                position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+                writing-mode: horizontal-tb !important; white-space: nowrap !important;
+                font-size: 1.05rem; color: #7f7f7f; letter-spacing: 0.3em;
+                opacity: 0; display: none; z-index: 11;
+                font-family: inherit !important;
+                transition: opacity 2s ease-in-out;
+            }
+
+            /* 🌟【终极祝福第二句：传统巨卷竖排手书大楷】完美参照图三与宣纸笺纸排版，不换行顶天立地 */
+            .rf-blessing-line2-vertical {
                 position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                 writing-mode: vertical-rl !important; white-space: nowrap !important;
-                font-size: 2.3rem !important; font-weight: bold;
+                height: 58vh !important; /* 锁住高度阻断折行 */
+                font-size: 2.6rem !important; font-weight: bold;
                 color: #962929; opacity: 0; display: none;
                 letter-spacing: 0.35em; line-height: 1.5;
                 z-index: 12; font-family: inherit !important;
-                /* 微弱的晕染背光，模拟墨迹在宣纸上的古朴厚重感 */
-                filter: drop-shadow(1px 1px 2px rgba(150, 41, 41, 0.15));
+                text-align: start !important; /* 顶格由上至下垂落 */
+                filter: drop-shadow(1px 1px 2px rgba(150, 41, 41, 0.12));
                 transition: opacity 2.8s cubic-bezier(0.33, 1, 0.68, 1);
             }
         </style>
@@ -155,7 +166,9 @@ export default async function playRongfeng(container) {
                 <div class="rf-final-closure-btn font-kangxi" id="rf-btn-close">【 全冊掩卷 · 終 】</div>
             </div>
 
-            <div class="rf-final-blessing-toast font-kangxi" id="rf-blessing-toast">願歲並謝，與長友兮。</div>
+            <div class="rf-blessing-line1-horizontal font-kangxi" id="rf-blessing-h1">《八風冊》全卷掩卷</div>
+
+            <div class="rf-blessing-line2-vertical font-kangxi" id="rf-blessing-v2">願歲並謝，與長友兮。</div>
         </div>
     `;
 
@@ -165,7 +178,9 @@ export default async function playRongfeng(container) {
     const stageBox = document.getElementById('rf-stage-box');
     const poemFlow = document.getElementById('rf-poem-flow');
     const closeBtn = document.getElementById('rf-btn-close');
-    const blessingToast = document.getElementById('rf-blessing-toast');
+    
+    const blessingH1 = document.getElementById('rf-blessing-h1');
+    const blessingV2 = document.getElementById('rf-blessing-v2');
 
     await wait(200);
     titleScreen.style.opacity = 1;
@@ -194,30 +209,38 @@ export default async function playRongfeng(container) {
     closeBtn.style.display = 'block';
     setTimeout(() => { closeBtn.style.opacity = 1; }, 50);
 
-    // ====== 🌟 终章全卷合流控制链 ======
+    // ====== 🌟 终章全卷控制链 ======
     return new Promise((resolveAllChaptersBook) => {
         closeBtn.addEventListener('click', async (e) => {
             e.stopPropagation();
             
-            // 1. 点击掩卷：曾皙诗行与掩卷键平缓淡出消散
+            // 1. 点击掩卷：曾皙诗行与掩卷键平缓消散
             poemFlow.style.opacity = 0;
             closeBtn.style.opacity = 0;
             await wait(1800);
-            
-            // 清空主舞台，画面进入完全干净的纯白留白静置状态
             stageBox.style.display = 'none';
-            await wait(1200);
-
-            // 2. 🌟 破白而生：终极祝福语缓缓在宣纸中央洇显
-            blessingToast.style.display = 'block';
+            
+            // 2. 🌟 留白间奏一：第一句优雅横排小字悄然浮现
+            blessingH1.style.display = 'block';
             await wait(50);
-            blessingToast.style.opacity = 0.85;
+            blessingH1.style.opacity = 0.55;
+            await wait(3000); // 驻留三秒小读
             
-            // 3. 驻留 5 秒：给看画人留出极其震撼、饱满的时间去品味这段临别寄语
-            await wait(5000);
+            // 横排小字淡出，画面再次回归绝对空灵的纯白
+            blessingH1.style.opacity = 0;
+            await wait(1500);
+            blessingH1.style.display = 'none';
             
-            // 4. 祝福语悄然消散，整卷大作融于初春微曦的阳光中
-            blessingToast.style.opacity = 0;
+            // 3. 🌟 留白间奏二：主祝福语依照图三法度，以磅礴的单列大楷竖排拔地而起！
+            blessingV2.style.display = 'block';
+            await wait(50);
+            blessingV2.style.opacity = 0.85;
+            
+            // 驻留 5.5 秒，给看画人留下跨越四季与八风的终极寄语时间
+            await wait(5500);
+            
+            // 4. 最终曲终归隐
+            blessingV2.style.opacity = 0;
             await wait(2500);
 
             wrapper.style.transition = 'opacity 3s ease-in-out';
@@ -228,7 +251,7 @@ export default async function playRongfeng(container) {
             container.classList.remove('active');
             
             console.log("🌸 《八风册》全卷目次顺利掩卷。愿岁并谢，与长友兮。");
-            resolveAllChaptersBook(); // 释放全部流程
+            resolveAllChaptersBook();
         });
     });
 }
