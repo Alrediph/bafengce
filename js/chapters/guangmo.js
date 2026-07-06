@@ -153,7 +153,7 @@ export default function playGuangmo(container) {
             <div class="guangmo-wrapper" id="gm-wrapper">
                 <div class="gm-warmth-glow" id="gm-glow-layer"></div>
 
-                <div id="gm-title-screen" class="vertical-text font-kangxi">广莫风</div>
+                <div id="gm-title-screen" class="vertical-text font-kangxi">广莫</div>
                 <div id="gm-intro" class="vertical-text font-kangxi" style="display: none;">
                     广莫风，北方风也。广，大也。莫，虚也。风至则万物藏，物成而虚也。<br>
                     属坎，八音为革。<br>
