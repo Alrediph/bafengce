@@ -43,7 +43,7 @@ function playChimeGong() {
 }
 
 export default async function playChanghe(container) {
-    // 路由守卫死锁
+    // 路由安全守卫
     if (window.currentActiveChapter === undefined) {
         window.currentActiveChapter = 5; 
     }
@@ -88,11 +88,9 @@ export default async function playChanghe(container) {
             }
             .global-starry-background.awaken { opacity: 0.9; }
             
-            /* 骨骼连线暗纹级 */
             .constellation-line { stroke: rgba(255,255,255,0.05); stroke-width: 0.5; fill: none; }
             .winter-triangle-line { stroke: rgba(218,175,115,0.07); stroke-width: 0.5; stroke-dasharray: 2 6; fill: none; }
             
-            /* 星宿颗粒柔化 */
             .star-node { fill: #ffffff; filter: drop-shadow(0 0 2px rgba(255,255,255,0.4)); }
             .star-node.alpha { fill: #ffdcb3; filter: drop-shadow(0 0 4px rgba(255,210,160,0.65)); } 
             .star-node.sirius { fill: #cae1ff; filter: drop-shadow(0 0 6px rgba(160,205,255,0.85)); } 
@@ -206,7 +204,6 @@ export default async function playChanghe(container) {
 
         <div class="changhe-wrapper" id="ch-wrapper">
             <svg class="global-starry-background" id="ch-starry-bg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
-                <!-- 环境淡星 -->
                 <circle cx="150" cy="120" r="1.2" class="star-node ambient" />
                 <circle cx="280" cy="340" r="1.0" class="star-node ambient" />
                 <circle cx="230" cy="780" r="1.5" class="star-node ambient" />
@@ -222,36 +219,28 @@ export default async function playChanghe(container) {
                 <circle cx="1780" cy="320" r="1.6" class="star-node ambient" />
                 <circle cx="1850" cy="670" r="1.1" class="star-node ambient" />
 
-                <!-- 猎户座骨骼连线 -->
                 <polyline points="720,260 920,290 980,620 760,580 720,260" class="constellation-line" /> 
                 
-                <!-- 🌟【终极修复位置】将原本逗号拼接的坐标，彻底独立解耦划归给标准的 x2 与 y2 容器 -->
                 <line x1="720" y1="260" x2="820" y2="440" class="constellation-line" />
                 <line x1="920" y1="290" x2="870" y2="445" class="constellation-line" />
                 
                 <polyline points="720,260 620,210 560,230" class="constellation-line" /> 
-                <!-- 星子点集 -->
                 <circle cx="720" cy="260" r="6.5" class="star-node alpha" /> 
                 <circle cx="920" cy="290" r="4.5" class="star-node" />       
                 <circle cx="980" cy="620" r="7.0" class="star-node alpha" /> 
                 <circle cx="760" cy="580" r="4.0" class="star-node" />       
-                <!-- 腰带三星 -->
                 <circle cx="820" cy="440" r="3.8" class="star-node" />       
                 <circle cx="845" cy="442" r="3.8" class="star-node" />       
                 <circle cx="870" cy="445" r="3.8" class="star-node" />       
 
-                <!-- 大犬座天狼星 -->
                 <polyline points="1200,820 1320,930 1420,880 1320,740 1200,820" class="constellation-line" />
                 <circle cx="1200" cy="820" r="9.0" class="star-node sirius" /> 
 
-                <!-- 小犬座南河三 -->
                 <line x1="1280" y1="220" x2="1400" y2="250" class="constellation-line" />
                 <circle cx="1280" cy="220" r="5.5" class="star-node alpha" /> 
 
-                <!-- 冬季大三角 -->
                 <polygon points="720,260 1200,820 1280,220" class="winter-triangle-line" />
 
-                <!-- 金牛座与昴宿星团 -->
                 <polyline points="520,160 420,90 320,120" class="constellation-line" />
                 <circle cx="520" cy="160" r="6.0" class="star-node alpha" /> 
                 <g transform="translate(300, 80)">
@@ -262,6 +251,7 @@ export default async function playChanghe(container) {
                 </g>
             </svg>
 
+            <div id="lf-title-screen" style="display:none;"></div> 
             <div id="ch-title-screen" class="vertical-text font-kangxi">阊阖风</div>
             <div id="ch-intro" class="vertical-text font-kangxi" style="display: none;">
                 阊阖风，西方风也。阊阖者，天门也。咸收藏也。<br>
@@ -343,44 +333,40 @@ export default async function playChanghe(container) {
         textSlot.innerText = wishInput.value;
     });
 
-    btnSubmit.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const wishContent = wishInput.value.trim();
-        if (!wishContent) return; 
+    // 🌟【时序放行核心流控制】
+    return new Promise((resolveNextChapter) => {
+        btnSubmit.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const wishContent = wishInput.value.trim();
+            if (!wishContent) return; 
 
-        writingPanel.style.opacity = 0;
-        brush.style.opacity = 0;
-        await wait(500);
-        writingPanel.style.display = 'none';
-        brush.style.display = 'none';
-        pushTip.style.opacity = 0;
+            writingPanel.style.opacity = 0;
+            brush.style.opacity = 0;
+            await wait(500);
+            writingPanel.style.display = 'none';
+            brush.style.display = 'none';
+            pushTip.style.opacity = 0;
 
-        starryBg.classList.add('awaken');
-        gateBox.classList.add('open');
-        await wait(1000);
+            starryBg.classList.add('awaken');
+            gateBox.classList.add('open');
+            await wait(1000);
 
-        plaque.classList.add('ascend');
-        playChimeGong();
-        await wait(5500);
+            plaque.classList.add('ascend');
+            playChimeGong();
+            await wait(5500);
 
-        contentStage.style.opacity = 0;
-        await wait(2500);
-        contentStage.innerHTML = ''; 
+            contentStage.style.opacity = 0;
+            await wait(2500);
+            contentStage.innerHTML = ''; 
 
-        spawnDriftingLeaves();
-        await wait(5000);
-        container.innerHTML = '';
-        container.classList.remove('active');
+            spawnDriftingLeaves();
+            await wait(5000);
+            container.innerHTML = '';
+            container.classList.remove('active');
+
+            // 🌟 递交第六开放行钥匙，并彻底释放当前 Promise 的阻塞！
+            window.currentActiveChapter = 6;
+            resolveNextChapter();
+        });
     });
-
-    function spawnDriftingLeaves() {
-        for (let i = 0; i < 2; i++) {
-            const leaf = document.createElement('div');
-            leaf.className = 'drifting-leaf';
-            leaf.style.left = `${40 + Math.random() * 30}%`;
-            leaf.style.animation = `leaf-drift ${5 + Math.random() * 3}s linear forwards`;
-            leaf.style.animationDelay = `${i * 1.5}s`;
-            wrapper.appendChild(leaf);
-        }
-    }
 }
