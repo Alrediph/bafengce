@@ -184,7 +184,7 @@ export default async function playBuzhou(container) {
         </style>
 
         <div class="buzhou-wrapper" id="bz-wrapper">
-            <div id="bz-title-screen" class="vertical-text font-kangxi">不周风</div>
+            <div id="bz-title-screen" class="vertical-text font-kangxi">不周</div>
             <div id="bz-intro" class="vertical-text font-kangxi" style="display: none;">
                 不周风，西北风也。不周者，不交也。阴阳未合，万物未生。<br>
                 属乾，八音为石。<br>
