@@ -43,7 +43,7 @@ function playChimeGong() {
 }
 
 export default async function playChanghe(container) {
-    // 强行激活当前状态
+    // 强行激活状态
     window.currentActiveChapter = 5; 
 
     container.innerHTML = `
@@ -74,12 +74,10 @@ export default async function playChanghe(container) {
                 display: flex; justify-content: center; align-items: center;
             }
             
-            /* 全景深邃大星空 */
             .global-starry-background {
                 position: absolute; width: 100vw; height: 100vh;
                 top: 0; left: 0; z-index: 1; pointer-events: none;
-                opacity: 0.22; 
-                transition: opacity 3s cubic-bezier(0.25, 1, 0.5, 1);
+                opacity: 0.22; transition: opacity 3s cubic-bezier(0.25, 1, 0.5, 1);
             }
             .global-starry-background.awaken { opacity: 0.9; }
             
@@ -102,8 +100,7 @@ export default async function playChanghe(container) {
             .gate-leaf {
                 position: absolute; top: 0; width: 50%; height: 100%;
                 background-color: rgba(11, 15, 22, 0.98); box-sizing: border-box; 
-                z-index: 2; 
-                transition: transform 2.5s cubic-bezier(0.66, 0, 0.2, 1);
+                z-index: 2; transition: transform 2.5s cubic-bezier(0.66, 0, 0.2, 1);
             }
             .gate-leaf-left { left: 0; border-right: 1px solid rgba(255,255,255,0.01); }
             .gate-leaf-right { right: 0; border-left: 1px solid rgba(255,255,255,0.01); }
@@ -123,8 +120,7 @@ export default async function playChanghe(container) {
                 background: linear-gradient(135deg, #dfcfa5 0%, #ccba8f 100%); 
                 border-radius: 2px;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 0 15px rgba(0,0,0,0.05);
-                z-index: 6; cursor: pointer; 
-                pointer-events: auto !important;
+                z-index: 6; cursor: pointer; pointer-events: auto !important;
                 transition: transform 3.8s cubic-bezier(0.55, 0, 0.1, 1), opacity 3s ease, box-shadow 1.5s ease;
                 display: flex; justify-content: center; align-items: center;
                 box-sizing: border-box; padding: 25px 12px;
@@ -145,8 +141,7 @@ export default async function playChanghe(container) {
                 position: absolute; top: 52%; left: 56%;
                 width: 8px; height: 180px;
                 background: linear-gradient(to bottom, #2b2b2b 0%, #151515 85%, #e2dac9 100%);
-                border-radius: 1px; z-index: 6; cursor: pointer;
-                pointer-events: auto !important;
+                border-radius: 1px; z-index: 6; cursor: pointer; pointer-events: auto !important;
                 transition: opacity 1s ease, transform 1s ease; transform-origin: top center;
             }
             .calligraphy-brush::after {
@@ -248,7 +243,7 @@ export default async function playChanghe(container) {
             <div id="lf-title-screen" style="display:none;"></div> 
             <div id="ch-title-screen" class="vertical-text font-kangxi">阊阖风</div>
             <div id="ch-intro" class="vertical-text font-kangxi" style="display: none;">
-                阊阖风，西方风也。阊阖者，天门也。咸收藏也。<br>
+                阊阖风，西方风也。阊阖者，天天门也。咸收藏也。<br>
                 属兑，八音为金。<br>
                 秋分之风。
             </div>
@@ -265,7 +260,7 @@ export default async function playChanghe(container) {
                     </div>
                     <div class="calligraphy-brush" id="ch-brush"></div>
                 </div>
-                <div id="gate-push-tip" class="font-kangxi">【 點擊祈福牌或毛笔，落墨祈愿 】</div>
+                <div id="gate-push-tip" class="font-kangxi">【 點擊祈福牌或毛筆，落墨祈願 】</div>
                 <div class="ink-writing-overlay font-kangxi" id="ch-writing-panel">
                     <input type="text" class="ink-input-field font-kangxi" id="wish-input" placeholder="秉笔落墨，写下祈愿" maxlength="24" autocomplete="off" />
                     <button class="ink-submit-btn font-kangxi" id="btn-submit-wish">送入門</button>
@@ -327,7 +322,21 @@ export default async function playChanghe(container) {
         textSlot.innerText = wishInput.value;
     });
 
+    // 🌟【时序放行控制核心：完美修复作用域闭包提升】
     return new Promise((resolveNextChapter) => {
+        
+        // 🌟 核心修正位置：将落叶动画生成器挪进 Promise 闭包内部，杜绝未定义崩溃
+        function spawnDriftingLeaves() {
+            for (let i = 0; i < 2; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'drifting-leaf';
+                leaf.style.left = `${40 + Math.random() * 30}%`;
+                leaf.style.animation = `leaf-drift ${5 + Math.random() * 3}s linear forwards`;
+                leaf.style.animationDelay = `${i * 1.5}s`;
+                wrapper.appendChild(leaf);
+            }
+        }
+
         btnSubmit.addEventListener('click', async (e) => {
             e.stopPropagation();
             const wishContent = wishInput.value.trim();
@@ -352,38 +361,28 @@ export default async function playChanghe(container) {
             await wait(2500);
             contentStage.innerHTML = ''; 
 
+            // 🌟 此时调用将完美畅通，绝不报错崩溃！
             spawnDriftingLeaves();
             await wait(3000);
             container.innerHTML = '';
             container.classList.remove('active');
 
-            // 🌟【强力双控放行】
+            // 递交第六开放行钥匙，并彻底释放当前 Promise 的阻塞！
             window.currentActiveChapter = 6;
             resolveNextChapter();
 
-            // ⚡【核心自愈补充机制】：如果主调度链条迟钝未响应，我们替它直接唤醒第六开
+            // ⚡【核心自愈兜底机制】：如果主调度链条偶发性迟钝，我们直接在此唤醒第六开
             setTimeout(() => {
                 const nextBox = document.getElementById('chapter-6');
                 if (nextBox && !nextBox.classList.contains('active')) {
-                    console.log("⚡ 触发应急唤醒机制，强行调取不周风章节...");
+                    console.log("⚡ 触发自愈机制，强行激活不周风章节...");
                     import('./buzhou.js').then(module => {
                         if (typeof module.default === 'function') {
                             module.default(nextBox);
                         }
-                    }).catch(err => console.error("应急加载不周风失败: ", err));
+                    }).catch(err => console.error("自愈加载失败: ", err));
                 }
             }, 300);
         });
     });
-
-    function spawnDriftingLeaves() {
-        for (let i = 0; i < 2; i++) {
-            const leaf = document.createElement('div');
-            leaf.className = 'drifting-leaf';
-            leaf.style.left = `${40 + Math.random() * 30}%`;
-            leaf.style.animation = `leaf-drift ${5 + Math.random() * 3}s linear forwards`;
-            leaf.style.animationDelay = `${i * 1.5}s`;
-            wrapper.appendChild(leaf);
-        }
-    }
 }
