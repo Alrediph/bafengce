@@ -36,7 +36,7 @@ function playPaoShengHarmony() {
 }
 
 export default async function playRongfeng(container) {
-    // 🛡️【时序放行守卫】
+    // 🛡️【终极时序放行守卫】
     if (window.currentActiveChapter === undefined) {
         window.currentActiveChapter = 8;
     }
@@ -46,10 +46,10 @@ export default async function playRongfeng(container) {
 
     container.classList.add('active');
 
-    // 🌟 全面采用全新的 -v9-true-vertical 类名，彻底掐死任何假竖排的玄学错误！
     container.innerHTML = `
         <style>
-            .rf-wrapper-v9-true-vertical {
+            /* 🌟 完全复刻清明标准：大宣纸底，注入立春微曦的轻柔呼吸感晕染 */
+            .rongfeng-wrapper {
                 width: 100%; height: 100%;
                 display: flex; justify-content: center; align-items: center;
                 position: relative; 
@@ -57,33 +57,21 @@ export default async function playRongfeng(container) {
                 user-select: none; overflow: hidden;
             }
             
-            /* 🌟【第一幕大字物理锁死】限制宽度，利用换行机制让“融”在顶、“风”在底，形成绝对地道的单列竖排！ */
-            #rf-title-v9-true { 
-                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                font-size: 3.8rem; 
-                line-height: 1.6; /* 纵向字距 */
-                letter-spacing: 0px; /* 抹除可能引发横向平移的参数 */
-                width: 4.5rem !important; /* 🌟 核心死锁：强行缩窄宽度，逼迫两个字只能纵向往下叠！ */
-                opacity: 0; transition: opacity 2s ease; cursor: pointer; 
-                text-align: center !important;
-                color: #1a1a1a; z-index: 10;
-                writing-mode: vertical-rl !important;
-                display: block !important;
+            /* 🌟【大修复：对标清明幕一】纯正金石大竖排，通过外层Flex天然双轴完美居中 */
+            #rf-title-screen { 
+                font-size: 3.8rem; letter-spacing: 0.6em; opacity: 0; 
+                transition: opacity 2s ease; cursor: pointer; 
             }
             
-            /* 🌟【第二幕启幕词物理锁死】同样限制高度与行气，确保多列从右向左垂落展布 */
-            #rf-intro-v9-true { 
-                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                font-size: 1.2rem; line-height: 2.8; letter-spacing: 0.15em; 
-                height: 48vh !important; /* 限制高度形成完美的古籍行气长度 */
-                opacity: 0; transition: opacity 2s ease; cursor: pointer;
-                writing-mode: vertical-rl !important; 
-                white-space: nowrap !important;
-                color: #2b2b2b; z-index: 10;
-                display: block !important;
+            /* 🌟【大修复：对标清明幕二】传统竖排多列启幕词，行气疏朗空灵，绝对不产生偏台 */
+            #rf-intro { 
+                font-size: 1.2rem; line-height: 3; opacity: 0; 
+                transition: opacity 2s ease; position: absolute; cursor: pointer; 
             }
             
-            /* 三幕：曾皙主舞台布局（对标清明雨歇图，完美状态） */
+            /* ================================================================= */
+            /* 🛡️ 曾皙主舞台及后续区域样式绝对保留，不发生任何改变 */
+            /* ================================================================= */
             .rf-stage-layout-v7 {
                 position: absolute; 
                 top: 50%; left: 50%; 
@@ -134,7 +122,6 @@ export default async function playRongfeng(container) {
             }
             .rf-close-btn-v7:hover { color: #962929; }
 
-            /* 四幕：最终祝福（绝对对标清明雨歇图，完美横排单行绝对居中） */
             .rf-blessing-vertical-v7 {
                 position: absolute; 
                 top: 50%; left: 50%; 
@@ -152,14 +139,14 @@ export default async function playRongfeng(container) {
             }
         </style>
 
-        <div class="rf-wrapper-v9-true-vertical" id="rf-wrapper">
-            <!-- 🌟 一幕大字：强行物理阻断，锁死为真正的单列直落竖排 -->
-            <div id="rf-title-v9-true" class="font-kangxi">融<br>風</div>
+        <div class="rongfeng-wrapper" id="rf-wrapper">
+            <!-- 🌟 幕一：完全对标清明，挂载正统 vertical-text 与类名 -->
+            <div id="rf-title-screen" class="vertical-text font-kangxi">融风</div>
 
-            <!-- 🌟 二幕启幕词：正统古籍多列竖排 -->
-            <div id="rf-intro-v9-true" class="font-kangxi" style="display: none;">
-                融风，东北风也。融，和也。阳气始动，万物始融。<br><br>
-                属艮，八音为泡。<br><br>
+            <!-- 🌟 幕二：完全对标清明，挂载正统 vertical-text 启幕解意 -->
+            <div id="rf-intro" class="vertical-text font-kangxi" style="display: none;">
+                融风，东北风也。融，和也。阳气始动，万物始融。<br>
+                属艮，八音为匏。<br>
                 立春之风。
             </div>
 
@@ -169,7 +156,7 @@ export default async function playRongfeng(container) {
                     <div class="rf-text-line-v7 font-kangxi">「浴乎沂，風乎舞雩，詠而歸。」</div>
                     <div class="rf-text-author-v7 font-kangxi">——《論語》</div>
                 </div>
-                <div class="rf-close-btn-v7 font-kangxi" id="rf-btn-close">【 全冊掩卷 · 終 】</div>
+                <div class="rf-final-closure-btn font-kangxi" id="rf-btn-close">【 全冊掩卷 · 終 】</div>
             </div>
 
             <!-- 四幕：屈原寄语终极绝对居中祝福 -->
@@ -178,23 +165,21 @@ export default async function playRongfeng(container) {
     `;
 
     const wrapper = document.getElementById('rf-wrapper');
-    const titleScreen = document.getElementById('rf-title-v9-true');
-    const intro = document.getElementById('rf-intro-v9-true');
+    const titleScreen = document.getElementById('rf-title-screen');
+    const intro = document.getElementById('rf-intro');
     const stageBox = document.getElementById('rf-stage-box');
     const poemFlow = document.getElementById('rf-poem-flow');
     const closeBtn = document.getElementById('rf-btn-close');
     const blessingToast = document.getElementById('rf-blessing-toast');
 
-    // ====== 第一幕：真正的直落大竖排 ======
-    await wait(200);
+    // ====== 🌟【大修正】第一幕：完全复刻清明大字时序 ======
     titleScreen.style.opacity = 1;
     await nextClick(wrapper);
     titleScreen.style.opacity = 0;
     await wait(2000);
     titleScreen.style.display = 'none';
-    titleScreen.remove(); 
 
-    // ====== 第二幕：立春解意（标准古籍竖排） ======
+    // ====== 🌟【大修正】第二幕：完全复刻清明解意词时序 ======
     intro.style.display = 'block';
     await wait(50);
     intro.style.opacity = 1;
@@ -202,9 +187,8 @@ export default async function playRongfeng(container) {
     intro.style.opacity = 0;
     await wait(2000);
     intro.style.display = 'none';
-    intro.remove(); 
 
-    // ====== 第三幕：曾皙言志大轴舞台 ======
+    // ====== 后续满意的舞台区域逻辑保持绝对不变 ======
     stageBox.style.display = 'block'; 
     await wait(100);
     stageBox.style.opacity = 1; 
@@ -228,7 +212,6 @@ export default async function playRongfeng(container) {
             
             await wait(1200);
 
-            // 屈原寄语
             blessingToast.style.display = 'block';
             await wait(50);
             blessingToast.style.opacity = 0.85;
