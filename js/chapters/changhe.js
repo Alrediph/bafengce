@@ -43,7 +43,7 @@ function playChimeGong() {
 }
 
 export default async function playChanghe(container) {
-    // 路由守卫锁死，绝不准第四开残影抢跑
+    // 路由守卫死锁
     if (window.currentActiveChapter === undefined) {
         window.currentActiveChapter = 5; 
     }
@@ -57,7 +57,7 @@ export default async function playChanghe(container) {
                 width: 100%; height: 100%;
                 display: flex; justify-content: center; align-items: center;
                 position: relative; 
-                background: linear-gradient(to bottom, #0d121a 0%, #18202b 100%);
+                background: linear-gradient(to bottom, #0c1017 0%, #161d27 100%);
                 user-select: none; overflow: hidden;
             }
             #ch-title-screen { 
@@ -79,29 +79,25 @@ export default async function playChanghe(container) {
                 display: flex; justify-content: center; align-items: center;
             }
             
-            /* 🌟【大改写】全局星空背景：恢复恢弘舒展、丝滑柔和的深邃大画幅 */
+            /* 全景深邃大星空 */
             .global-starry-background {
                 position: absolute; width: 100vw; height: 100vh;
                 top: 0; left: 0; z-index: 1; pointer-events: none;
-                opacity: 0.18; 
+                opacity: 0.22; 
                 transition: opacity 3s cubic-bezier(0.25, 1, 0.5, 1);
             }
-            .global-starry-background.awaken { opacity: 0.85; }
+            .global-starry-background.awaken { opacity: 0.9; }
             
-            /* 丝质典雅经纬网 */
-            .astro-grid { stroke: rgba(215,195,160,0.07); stroke-width: 0.6; fill: none; }
-            .astro-dashed { stroke: rgba(215,195,160,0.05); stroke-width: 0.5; stroke-dasharray: 2 6; fill: none; }
+            /* 🌟【大降噪】骨骼连线降低至 0.05 极淡水印级，虚线化大三角，彻底斩断凌乱感 */
+            .constellation-line { stroke: rgba(255,255,255,0.05); stroke-width: 0.5; fill: none; }
+            .winter-triangle-line { stroke: rgba(218,175,115,0.07); stroke-width: 0.5; stroke-dasharray: 2 6; fill: none; }
             
-            /* 星座骨骼连线：极其纤细，若隐若现 */
-            .constellation-line { stroke: rgba(255,255,255,0.15); stroke-width: 0.5; fill: none; transition: stroke 2s ease; }
-            .winter-triangle-line { stroke: rgba(218,175,115,0.18); stroke-width: 0.7; stroke-dasharray: 4 4; fill: none; }
-            
-            /* 🌟 星子图层核心样式优化：加入朦胧夜空光晕 */
-            .star-node { fill: #ffffff; filter: drop-shadow(0 0 2px rgba(255,255,255,0.6)); }
-            .star-node.alpha { fill: #ffe3ca; filter: drop-shadow(0 0 5px rgba(255,210,160,0.85)); } 
-            .star-node.sirius { fill: #cce3ff; filter: drop-shadow(0 0 8px rgba(150,200,255,0.95)); } 
-            .star-node.ambient { fill: #ffffff; opacity: 0.4; }
-            .star-node.vermilion { fill: #b84a4a; opacity: 0.7; }
+            /* 星宿颗粒柔化，拒绝突兀硬块 */
+            .star-node { fill: #ffffff; filter: drop-shadow(0 0 2px rgba(255,255,255,0.4)); }
+            .star-node.alpha { fill: #ffdcb3; filter: drop-shadow(0 0 4px rgba(255,210,160,0.65)); } 
+            .star-node.sirius { fill: #cae1ff; filter: drop-shadow(0 0 6px rgba(160,205,255,0.85)); } 
+            .star-node.ambient { fill: #ffffff; opacity: 0.18; }
+            .star-node.vermilion { fill: #9e4343; opacity: 0.45; }
 
             .gate-universe-box {
                 position: absolute; top: 50%; left: 50%;
@@ -112,19 +108,19 @@ export default async function playChanghe(container) {
             }
             .gate-leaf {
                 position: absolute; top: 0; width: 50%; height: 100%;
-                background-color: rgba(13, 17, 24, 0.97); box-sizing: border-box; 
+                background-color: rgba(11, 15, 22, 0.98); box-sizing: border-box; 
                 z-index: 2; 
                 transition: transform 2.5s cubic-bezier(0.66, 0, 0.2, 1);
             }
-            .gate-leaf-left { left: 0; border-right: 1px solid rgba(255,255,255,0.02); }
-            .gate-leaf-right { right: 0; border-left: 1px solid rgba(255,255,255,0.02); }
+            .gate-leaf-left { left: 0; border-right: 1px solid rgba(255,255,255,0.01); }
+            .gate-leaf-right { right: 0; border-left: 1px solid rgba(255,255,255,0.01); }
             .gate-universe-box.open .gate-leaf-left { transform: translateX(-100%); }
             .gate-universe-box.open .gate-leaf-right { transform: translateX(100%); }
 
             .heaven-ray {
                 position: absolute; top: 0; left: 50%; transform: translateX(-50%);
                 width: 180px; height: 100%;
-                background: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 60%, rgba(255,255,255,0) 100%);
+                background: linear-gradient(to bottom, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 60%, rgba(255,255,255,0) 100%);
                 pointer-events: none; z-index: 3;
             }
             
@@ -209,64 +205,46 @@ export default async function playChanghe(container) {
         </style>
 
         <div class="changhe-wrapper" id="ch-wrapper">
-            <!-- 🌟 全屏覆盖：全新重构、宏大阔朗的 2006 年 1 月冬季星空画布 -->
             <svg class="global-starry-background" id="ch-starry-bg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
-                <!-- 朦胧古典浑天仪圆轨格线 -->
-                <circle cx="960" cy="540" r="420" class="astro-grid" />
-                <circle cx="960" cy="540" r="700" class="astro-dashed" />
-                <line x1="100" y1="540" x2="1820" y2="540" class="astro-dashed" />
-                <line x1="960" y1="50" x2="960" y2="1030" class="astro-dashed" />
+                
+                <circle cx="150" cy="120" r="1.2" class="star-node ambient" />
+                <circle cx="280" cy="340" r="1.0" class="star-node ambient" />
+                <circle cx="230" cy="780" r="1.5" class="star-node ambient" />
+                <circle cx="480" cy="210" r="1.3" class="star-node ambient" />
+                <circle cx="510" cy="890" r="1.1" class="star-node ambient" />
+                <circle cx="700" cy="140" r="1.6" class="star-node ambient" />
+                <circle cx="890" cy="850" r="1.4" class="star-node ambient" />
+                <circle cx="1110" cy="160" r="1.2" class="star-node ambient" />
+                <circle cx="1150" cy="940" r="1.7" class="star-node ambient" />
+                <circle cx="1380" cy="450" r="1.0" class="star-node ambient" />
+                <circle cx="1490" cy="180" r="1.5" class="star-node ambient" />
+                <circle cx="1650" cy="890" r="1.3" class="star-node ambient" />
+                <circle cx="1780" cy="320" r="1.6" class="star-node ambient" />
+                <circle cx="1850" cy="670" r="1.1" class="star-node ambient" />
 
-                <!-- 🌟【大写意：全屏自然散落的背景淡星，剔除孤岛感】 -->
-                <circle cx="250" cy="180" r="1.2" class="star-node ambient" />
-                <circle cx="450" cy="850" r="1.5" class="star-node ambient" />
-                <circle cx="150" cy="620" r="1.0" class="star-node ambient" />
-                <circle cx="850" cy="120" r="1.8" class="star-node ambient" />
-                <circle cx="1300" cy="150" r="1.3" class="star-node ambient" />
-                <circle cx="1750" cy="280" r="1.6" class="star-node ambient" />
-                <circle cx="1620" cy="780" r="1.2" class="star-node ambient" />
-                <circle cx="1450" cy="920" r="1.5" class="star-node ambient" />
-                <circle cx="780" cy="960" r="1.0" class="star-node ambient" />
-                <circle cx="1050" cy="980" r="1.4" class="star-node ambient" />
-
-                <!-- 🌟【迈向大画幅：猎户座 Orion 真正威严展布】 -->
-                <!-- 骨骼框架连线 -->
                 <polyline points="720,260 920,290 980,620 760,580 720,260" class="constellation-line" /> 
                 <line x1="720" y1="260" x2="820,440" class="constellation-line" />
                 <line x1="920" y1="290" x2="870,445" class="constellation-line" />
                 <polyline points="720,260 620,210 560,230" class="constellation-line" /> 
-                <!-- 核心亮星锚定 -->
-                <circle cx="720" cy="260" r="7.0" class="star-node alpha" /> <!-- 参宿四 ( Betelgeuse ) -->
-                <circle cx="920" cy="290" r="5.0" class="star-node" />       <!-- 参宿五 -->
-                <circle cx="980" cy="620" r="7.5" class="star-node alpha" /> <!-- 参宿七 ( Rigel ) -->
-                <circle cx="760" cy="580" r="4.5" class="star-node" />       <!-- 参宿六 -->
-                <!-- 昂然横陈的“腰带三星” -->
-                <circle cx="820" cy="440" r="4.0" class="star-node" />       
-                <circle cx="845" cy="442" r="4.0" class="star-node" />       
-                <circle cx="870" cy="445" r="4.0" class="star-node" />       
+                <circle cx="720" cy="260" r="6.5" class="star-node alpha" /> <circle cx="920" cy="290" r="4.5" class="star-node" />       
+                <circle cx="980" cy="620" r="7.0" class="star-node alpha" /> <circle cx="760" cy="580" r="4.0" class="star-node" />       
+                <circle cx="820" cy="440" r="3.8" class="star-node" />       
+                <circle cx="845" cy="442" r="3.8" class="star-node" />       
+                <circle cx="870" cy="445" r="3.8" class="star-node" />       
 
-                <!-- 🌟【大犬座与天狼星 Canis Major - 移至右侧下开阔区】 -->
                 <polyline points="1200,820 1320,930 1420,880 1320,740 1200,820" class="constellation-line" />
-                <circle cx="1200" cy="820" r="10.0" class="star-node sirius" /> <!-- 极高亮耀眼天狼星 -->
+                <circle cx="1200" cy="820" r="9.0" class="star-node sirius" /> <line x1="1280" y1="220" x2="1400" y2="250" class="constellation-line" />
+                <circle cx="1280" cy="220" r="5.5" class="star-node alpha" /> 
 
-                <!-- 🌟【小犬座南河三 Canis Minor - 居右上高空】 -->
-                <line x1="1280" y1="220" x2="1400" y2="250" class="constellation-line" />
-                <circle cx="1280" cy="220" r="6.0" class="star-node alpha" /> <!-- 南河三 -->
-
-                <!-- 🌟【冬季大三角神圣巨拱连线 - 纵贯整座幕布】 -->
                 <polygon points="720,260 1200,820 1280,220" class="winter-triangle-line" />
 
-                <!-- 🌟【金牛座与朱砂红昴宿星团 - 铺展至左侧开阔野】 -->
                 <polyline points="520,160 420,90 320,120" class="constellation-line" />
-                <circle cx="520" cy="160" r="6.5" class="star-node alpha" /> <!-- 毕宿五 -->
-                <!-- 烟散状浪漫昂宿星群 -->
+                <circle cx="520" cy="160" r="6.0" class="star-node alpha" /> 
                 <g transform="translate(300, 80)">
                     <circle cx="0" cy="0" r="2.0" class="star-node vermilion" />
                     <circle cx="8" cy="-6" r="1.5" class="star-node vermilion" />
-                    <circle cx="-6" cy="10" r="2.0" class="star-node vermilion" />
+                    <circle cx="-6" cy="10" r="1.8" class="star-node vermilion" />
                     <circle cx="14" cy="6" r="1.2" class="star-node vermilion" />
-                    <circle cx="-3" cy="-10" r="1.6" class="star-node vermilion" />
-                    <circle cx="22" cy="-2" r="1.8" class="star-node vermilion" />
                 </g>
             </svg>
 
@@ -279,13 +257,11 @@ export default async function playChanghe(container) {
 
             <div id="ch-content-stage">
                 <div class="woodblock-catalog-container gate-universe-box font-kangxi">
-                    <!-- 门扉图层（安全居于底层） -->
                     <div class="ch-gate-overlay" id="ch-gate-box">
                         <div class="gate-leaf gate-leaf-left"></div>
                         <div class="gate-leaf gate-leaf-right"></div>
                     </div>
                     <div class="heaven-ray"></div>
-                    <!-- 祈福牌（高调托举至最上层） -->
                     <div class="prayer-plaque-container font-kangxi" id="ch-plaque">
                         <div class="plaque-wish-text font-kangxi" id="wish-text-slot"></div>
                     </div>
