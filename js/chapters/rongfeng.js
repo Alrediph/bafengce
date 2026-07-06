@@ -36,7 +36,7 @@ function playPaoShengHarmony() {
 }
 
 export default async function playRongfeng(container) {
-    // 🛡️【时序放行守卫】
+    // 🛡️【终极时序守卫】
     if (window.currentActiveChapter === undefined) {
         window.currentActiveChapter = 8;
     }
@@ -46,9 +46,10 @@ export default async function playRongfeng(container) {
 
     container.classList.add('active');
 
+    // 🌟 通过全局唯一专属的 v5 新类名，彻底粉碎任何浏览器顽固缓存！
     container.innerHTML = `
         <style>
-            .rongfeng-wrapper {
+            .rf-wrapper-v5-final {
                 width: 100%; height: 100%;
                 display: flex; justify-content: center; align-items: center;
                 position: relative; 
@@ -56,7 +57,7 @@ export default async function playRongfeng(container) {
                 user-select: none; overflow: hidden;
             }
             
-            #rf-title-screen { 
+            #rf-title-v5 { 
                 position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                 font-size: 3.8rem; letter-spacing: 0.6em; text-indent: 0.6em;
                 opacity: 0; transition: opacity 2s ease; cursor: pointer; white-space: nowrap; text-align: center;
@@ -64,7 +65,7 @@ export default async function playRongfeng(container) {
                 writing-mode: vertical-rl !important;
             }
             
-            #rf-intro { 
+            #rf-intro-v5 { 
                 position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                 font-size: 1.2rem; line-height: 2.8; letter-spacing: 0.15em; 
                 opacity: 0; transition: opacity 2s ease; cursor: pointer;
@@ -72,16 +73,15 @@ export default async function playRongfeng(container) {
                 color: #2b2b2b; z-index: 10;
             }
             
-            /* 中央垂直布局总链 */
-            .rf-master-layout-box {
+            .rf-stage-layout-v5 {
                 display: flex !important; flex-direction: column !important;
                 align-items: center !important; justify-content: center !important;
                 width: 100%; height: 100%; position: relative; z-index: 5;
                 opacity: 0; transition: opacity 2.5s cubic-bezier(0.25, 1, 0.5, 1);
             }
             
-            /* 正统竖排流排版 */
-            .rf-poem-scroll-flow {
+            /* 正统古籍竖排长廊容器 */
+            .rf-scroll-flow-v5 {
                 height: 62vh !important; 
                 width: auto;
                 writing-mode: vertical-rl !important;
@@ -90,8 +90,8 @@ export default async function playRongfeng(container) {
                 transition: opacity 1.8s ease-in-out; 
             }
             
-            /* 曾皙言志正文：巨幕字体 */
-            .rf-text-line {
+            /* 曾皙正文：巨幕级挺拔中流砥柱 */
+            .rf-text-line-v5 {
                 display: block !important;
                 font-size: 2.5rem !important; 
                 font-weight: bold; color: #111111;
@@ -99,13 +99,14 @@ export default async function playRongfeng(container) {
                 white-space: nowrap !important; 
                 font-family: inherit !important;
                 filter: drop-shadow(0.5px 0.5px 0px rgba(0,0,0,0.04));
+                /* 🌟【大修正】注入强力的左侧外衬，强行与左列落款扯开宽广的呼吸行气间距，绝不挤压！ */
+                margin-left: 55px !important; 
             }
             
-            /* 落款出处 */
-            .rf-text-author {
+            /* 落款出处：在左列自成一线，优雅沉底 */
+            .rf-text-author-v5 {
                 display: block !important;
                 font-size: 1.05rem; color: #555555;
-                margin-left: 28px; 
                 text-align: end !important; 
                 font-family: inherit !important;
                 white-space: nowrap !important;
@@ -113,7 +114,7 @@ export default async function playRongfeng(container) {
                 letter-spacing: 0.15em;
             }
             
-            .rf-final-closure-btn {
+            .rf-close-btn-v5 {
                 writing-mode: horizontal-tb !important; white-space: nowrap !important;
                 font-size: 1.05rem; letter-spacing: 0.2em; color: #7f7f7f; 
                 font-weight: bold; cursor: pointer;
@@ -122,65 +123,55 @@ export default async function playRongfeng(container) {
                 font-family: inherit !important;
                 margin-top: 15px;
             }
-            .rf-final-closure-btn:hover { color: #962929; }
+            .rf-close-btn-v5:hover { color: #962929; }
 
-            /* 🌟【终极祝福第一句：现代优雅横排导引小字】 */
-            .rf-blessing-line1-horizontal {
-                position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
-                writing-mode: horizontal-tb !important; white-space: nowrap !important;
-                font-size: 1.05rem; color: #7f7f7f; letter-spacing: 0.3em;
-                opacity: 0; display: none; z-index: 11;
-                font-family: inherit !important;
-                transition: opacity 2s ease-in-out;
-            }
-
-            /* 🌟【终极祝福第二句：传统巨卷竖排手书大楷】完美参照图三与宣纸笺纸排版，不换行顶天立地 */
-            .rf-blessing-line2-vertical {
+            /* 🌟【终极祝福：完美参照单叶笺纸法度】纯正独立单列竖排大楷，顶天立地绝不折行 */
+            .rf-blessing-vertical-v5 {
                 position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                 writing-mode: vertical-rl !important; white-space: nowrap !important;
-                height: 58vh !important; /* 锁住高度阻断折行 */
+                height: 58vh !important; 
                 font-size: 2.6rem !important; font-weight: bold;
                 color: #962929; opacity: 0; display: none;
                 letter-spacing: 0.35em; line-height: 1.5;
                 z-index: 12; font-family: inherit !important;
-                text-align: start !important; /* 顶格由上至下垂落 */
+                text-align: start !important; 
                 filter: drop-shadow(1px 1px 2px rgba(150, 41, 41, 0.12));
                 transition: opacity 2.8s cubic-bezier(0.33, 1, 0.68, 1);
             }
         </style>
 
-        <div class="rongfeng-wrapper" id="rf-wrapper">
-            <div id="rf-title-screen" class="vertical-text font-kangxi">融风</div>
+        <div class="rf-wrapper-v5-final" id="rf-wrapper">
+            <!-- 一幕大字 -->
+            <div id="rf-title-v5" class="vertical-text font-kangxi">融风</div>
 
-            <div id="rf-intro" class="vertical-text font-kangxi" style="display: none;">
+            <!-- 二幕启幕词 -->
+            <div id="rf-intro-v5" class="vertical-text font-kangxi" style="display: none;">
                 融风，东北风也。融，和也。阳气始动，万物始融。<br>
                 属艮，八音为泡。<br>
                 立春之风。
             </div>
 
-            <div class="rf-master-layout-box" id="rf-stage-box">
-                <div class="rf-poem-scroll-flow font-kangxi" id="rf-poem-flow">
-                    <div class="rf-text-line font-kangxi">「浴乎沂，風乎舞雩，詠而歸。」</div>
-                    <div class="rf-text-author font-kangxi">——《論語》</div>
+            <!-- 三幕：主舞台 -->
+            <div class="rf-stage-layout-v5" id="rf-stage-box">
+                <div class="rf-scroll-flow-v5 font-kangxi" id="rf-poem-flow">
+                    <div class="rf-text-line-v5 font-kangxi">「浴乎沂，風乎舞雩，詠而歸。」</div>
+                    <div class="rf-text-author-v5 font-kangxi">——《論語》</div>
                 </div>
-                <div class="rf-final-closure-btn font-kangxi" id="rf-btn-close">【 全冊掩卷 · 終 】</div>
+                <div class="rf-close-btn-v5 font-kangxi" id="rf-btn-close">【 全冊掩卷 · 終 】</div>
             </div>
 
-            <div class="rf-blessing-line1-horizontal font-kangxi" id="rf-blessing-h1">《八風冊》全卷掩卷</div>
-
-            <div class="rf-blessing-line2-vertical font-kangxi" id="rf-blessing-v2">願歲並謝，與長友兮。</div>
+            <!-- 🌟 四幕：直接呈现终极单列手书祝福（删除了所有中间过渡句） -->
+            <div class="rf-blessing-vertical-v5 font-kangxi" id="rf-blessing-toast">願歲並謝，與長友兮。</div>
         </div>
     `;
 
     const wrapper = document.getElementById('rf-wrapper');
-    const titleScreen = document.getElementById('rf-title-screen');
-    const intro = document.getElementById('rf-intro');
+    const titleScreen = document.getElementById('rf-title-v5');
+    const intro = document.getElementById('rf-intro-v5');
     const stageBox = document.getElementById('rf-stage-box');
     const poemFlow = document.getElementById('rf-poem-flow');
     const closeBtn = document.getElementById('rf-btn-close');
-    
-    const blessingH1 = document.getElementById('rf-blessing-h1');
-    const blessingV2 = document.getElementById('rf-blessing-v2');
+    const blessingToast = document.getElementById('rf-blessing-toast');
 
     await wait(200);
     titleScreen.style.opacity = 1;
@@ -209,38 +200,29 @@ export default async function playRongfeng(container) {
     closeBtn.style.display = 'block';
     setTimeout(() => { closeBtn.style.opacity = 1; }, 50);
 
-    // ====== 🌟 终章全卷控制链 ======
     return new Promise((resolveAllChaptersBook) => {
         closeBtn.addEventListener('click', async (e) => {
             e.stopPropagation();
             
-            // 1. 点击掩卷：曾皙诗行与掩卷键平缓消散
+            // 1. 点击按钮后，前半部分舞台如细雨般轻缓淡出
             poemFlow.style.opacity = 0;
             closeBtn.style.opacity = 0;
             await wait(1800);
             stageBox.style.display = 'none';
             
-            // 2. 🌟 留白间奏一：第一句优雅横排小字悄然浮现
-            blessingH1.style.display = 'block';
+            // 2. 纯白画布静置留白，酝酿情绪
+            await wait(1200);
+
+            // 3. 🌟【大高潮】没有任何多余的打扰，朱砂红的文人祝福语直接挺拔洇显！
+            blessingToast.style.display = 'block';
             await wait(50);
-            blessingH1.style.opacity = 0.55;
-            await wait(3000); // 驻留三秒小读
+            blessingToast.style.opacity = 0.85;
             
-            // 横排小字淡出，画面再次回归绝对空灵的纯白
-            blessingH1.style.opacity = 0;
-            await wait(1500);
-            blessingH1.style.display = 'none';
+            // 驻留 6 秒，供看画人静静凝视回味
+            await wait(6000);
             
-            // 3. 🌟 留白间奏二：主祝福语依照图三法度，以磅礴的单列大楷竖排拔地而起！
-            blessingV2.style.display = 'block';
-            await wait(50);
-            blessingV2.style.opacity = 0.85;
-            
-            // 驻留 5.5 秒，给看画人留下跨越四季与八风的终极寄语时间
-            await wait(5500);
-            
-            // 4. 最终曲终归隐
-            blessingV2.style.opacity = 0;
+            // 4. 祝福语悄然消散，融于立春暖阳
+            blessingToast.style.opacity = 0;
             await wait(2500);
 
             wrapper.style.transition = 'opacity 3s ease-in-out';
@@ -250,7 +232,6 @@ export default async function playRongfeng(container) {
             container.innerHTML = '';
             container.classList.remove('active');
             
-            console.log("🌸 《八风册》全卷目次顺利掩卷。愿岁并谢，与长友兮。");
             resolveAllChaptersBook();
         });
     });
