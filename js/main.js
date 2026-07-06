@@ -6,7 +6,8 @@ import playJingfeng from './chapters/jingfeng.js?v=3';
 import playLiangfeng from './chapters/liangfeng.js?v=3';
 import playChanghe from './chapters/changhe.js?v=3';
 import playBuzhou from './chapters/buzhou.js?v=3';
-import playGuangmo from './chapters/guangmo.js?v=3'; // 🌟 引入全新第七开 · 广莫风
+import playGuangmo from './chapters/guangmo.js?v=3';
+import playRongfeng from './chapters/rongfeng.js?v=3'; // 🌟 精准引入第八开 · 融风
 
 async function init() {
     const prologueContainer = document.getElementById('prologue');
@@ -16,15 +17,16 @@ async function init() {
     const liangfengContainer = document.getElementById('chapter-4');
     const changheContainer = document.getElementById('chapter-5');
     const buzhouContainer = document.getElementById('chapter-6');
-    const guangmoContainer = document.getElementById('chapter-7'); // 锁定第七开容器
+    const guangmoContainer = document.getElementById('chapter-7');
+    const rongfengContainer = document.getElementById('chapter-8'); // 锁定第八开终章容器
 
     // 1. 序幕
     await playPrologue(prologueContainer);
 
-    // 2. 第一开 · 明庶
+    // 2. 第一开 · 明庶风
     await playMingshu(mingshuContainer);
 
-    // 3. 第二开 · 清明
+    // 3. 第二开 · 清明风
     await playQingming(qingmingContainer);
 
     // 4. 第三开 · 景风
@@ -41,6 +43,9 @@ async function init() {
 
     // 8. 第七开 · 广莫风
     await playGuangmo(guangmoContainer);
+
+    // 9. 第八开 · 融风
+    await playRongfeng(rongfengContainer);
 }
 
 window.addEventListener('DOMContentLoaded', init);
