@@ -4,7 +4,8 @@ import playMingshu from './chapters/mingshu.js?v=3';
 import playQingming from './chapters/qingming.js?v=3';
 import playJingfeng from './chapters/jingfeng.js?v=3';
 import playLiangfeng from './chapters/liangfeng.js?v=3';
-import playChanghe from './chapters/changhe.js?v=3'; // 🌟 精准引入第五开 · 阊阖风
+import playChanghe from './chapters/changhe.js?v=3';
+import playBuzhou from './chapters/buzhou.js?v=3'; // 🌟 引入全新第六开 · 不周风
 
 async function init() {
     const prologueContainer = document.getElementById('prologue');
@@ -12,7 +13,8 @@ async function init() {
     const qingmingContainer = document.getElementById('chapter-2');
     const jingfengContainer = document.getElementById('chapter-3');
     const liangfengContainer = document.getElementById('chapter-4');
-    const changheContainer = document.getElementById('chapter-5'); // 锁定第五开容器
+    const changheContainer = document.getElementById('chapter-5');
+    const buzhouContainer = document.getElementById('chapter-6'); // 🌟 锁定第六开容器
 
     // 1. 序幕
     await playPrologue(prologueContainer);
@@ -31,6 +33,9 @@ async function init() {
 
     // 6. 第五开 · 阊阖风
     await playChanghe(changheContainer);
+
+    // 7. 第六开 · 不周风
+    await playBuzhou(buzhouContainer);
 }
 
 window.addEventListener('DOMContentLoaded', init);
