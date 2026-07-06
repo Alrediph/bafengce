@@ -43,8 +43,7 @@ function playChimeGong() {
 }
 
 export default async function playChanghe(container) {
-    // 强行激活状态
-    window.currentActiveChapter = 5; 
+    container.classList.add('active'); // 进场瞬间刷新视图层
 
     container.innerHTML = `
         <style>
@@ -243,7 +242,7 @@ export default async function playChanghe(container) {
             <div id="lf-title-screen" style="display:none;"></div> 
             <div id="ch-title-screen" class="vertical-text font-kangxi">阊阖风</div>
             <div id="ch-intro" class="vertical-text font-kangxi" style="display: none;">
-                阊阖风，西方风也。阊阖者，天天门也。咸收藏也。<br>
+                阊阖风，西方风也。阊阖者，天门也。咸收藏也。<br>
                 属兑，八音为金。<br>
                 秋分之风。
             </div>
@@ -283,9 +282,7 @@ export default async function playChanghe(container) {
     const gateBox = document.getElementById('ch-gate-box');
     const pushTip = document.getElementById('gate-push-tip');
 
-    container.classList.add('active');
-    await wait(400);
-
+    await wait(100);
     titleScreen.style.opacity = 1;
     await nextClick(wrapper);
     titleScreen.style.opacity = 0;
@@ -322,10 +319,7 @@ export default async function playChanghe(container) {
         textSlot.innerText = wishInput.value;
     });
 
-    // 🌟【时序放行控制核心：完美修复作用域闭包提升】
     return new Promise((resolveNextChapter) => {
-        
-        // 🌟 核心修正位置：将落叶动画生成器挪进 Promise 闭包内部，杜绝未定义崩溃
         function spawnDriftingLeaves() {
             for (let i = 0; i < 2; i++) {
                 const leaf = document.createElement('div');
@@ -361,28 +355,24 @@ export default async function playChanghe(container) {
             await wait(2500);
             contentStage.innerHTML = ''; 
 
-            // 🌟 此时调用将完美畅通，绝不报错崩溃！
             spawnDriftingLeaves();
             await wait(3000);
             container.innerHTML = '';
             container.classList.remove('active');
 
-            // 递交第六开放行钥匙，并彻底释放当前 Promise 的阻塞！
-            window.currentActiveChapter = 6;
             resolveNextChapter();
 
-            // ⚡【核心自愈兜底机制】：如果主调度链条偶发性迟钝，我们直接在此唤醒第六开
+            // 🌟 核心应急联动：彻底打通下一章
             setTimeout(() => {
                 const nextBox = document.getElementById('chapter-6');
                 if (nextBox && !nextBox.classList.contains('active')) {
-                    console.log("⚡ 触发自愈机制，强行激活不周风章节...");
                     import('./buzhou.js').then(module => {
                         if (typeof module.default === 'function') {
                             module.default(nextBox);
                         }
-                    }).catch(err => console.error("自愈加载失败: ", err));
+                    });
                 }
-            }, 300);
+            }, 100);
         });
     });
 }
