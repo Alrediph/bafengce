@@ -1,13 +1,13 @@
 // js/main.js
-import playPrologue from './chapters/prologue.js?v=3';
-import playMingshu from './chapters/mingshu.js?v=3';
-import playQingming from './chapters/qingming.js?v=3';
-import playJingfeng from './chapters/jingfeng.js?v=3';
-import playLiangfeng from './chapters/liangfeng.js?v=3';
-import playChanghe from './chapters/changhe.js?v=3';
-import playBuzhou from './chapters/buzhou.js?v=3';
-import playGuangmo from './chapters/guangmo.js?v=3';
-import playRongfeng from './chapters/rongfeng.js?v=3'; // 🌟 精准引入第八开 · 融风
+import playPrologue from './chapters/prologue.js?v=4';
+import playMingshu from './chapters/mingshu.js?v=4';
+import playQingming from './chapters/qingming.js?v=4';
+import playJingfeng from './chapters/jingfeng.js?v=4';
+import playLiangfeng from './chapters/liangfeng.js?v=4';
+import playChanghe from './chapters/changhe.js?v=4';
+import playBuzhou from './chapters/buzhou.js?v=4';
+import playGuangmo from './chapters/guangmo.js?v=4';   // 🌟 强切 v4 版本，彻底融化第七开缓存死锁
+import playRongfeng from './chapters/rongfeng.js?v=4'; // 🌟 强切 v4 版本，彻底融化第八开缓存死锁
 
 async function init() {
     const prologueContainer = document.getElementById('prologue');
@@ -18,7 +18,7 @@ async function init() {
     const changheContainer = document.getElementById('chapter-5');
     const buzhouContainer = document.getElementById('chapter-6');
     const guangmoContainer = document.getElementById('chapter-7');
-    const rongfengContainer = document.getElementById('chapter-8'); // 锁定第八开终章容器
+    const rongfengContainer = document.getElementById('chapter-8');
 
     // 1. 序幕
     await playPrologue(prologueContainer);
